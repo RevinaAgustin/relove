@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+  --spacing-bento-gap: 1.5rem;
+}
+
+/* Global overflow-x protection to prevent horizontal scroll leakages on mobile devices */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}

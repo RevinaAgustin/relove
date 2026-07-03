@@ -1,0 +1,124 @@
+{
+  "branches": [
+    {
+      "id": "sicepat-kb",
+      "name": "SiCepat Kebayoran Baru",
+      "courier": "SiCepat",
+      "lat": -6.2448,
+      "lon": 106.7973,
+      "address": "Jl. Kebayoran Baru, Kebayoran Baru, Jakarta Selatan 12160",
+      "phone": "(021) 7244-5678",
+      "operatingHours": "08:00 - 18:00"
+    },
+    {
+      "id": "sicepat-cx",
+      "name": "SiCepat Cilandak",
+      "courier": "SiCepat",
+      "lat": -6.2894,
+      "lon": 106.8010,
+      "address": "Jl. Cilandak Raya, Cilandak, Jakarta Selatan 12410",
+      "phone": "(021) 7653-4321",
+      "operatingHours": "08:00 - 18:00"
+    },
+    {
+      "id": "sicepat-ps",
+      "name": "SiCepat Pondok Indah",
+      "courier": "SiCepat",
+      "lat": -6.2617,
+      "lon": 106.7820,
+      "address": "Jl. Pondok Indah, Pondok Indah, Jakarta Selatan 12310",
+      "phone": "(021) 7690-1234",
+      "operatingHours": "08:00 - 18:00"
+    },
+    {
+      "id": "sicepat-sb",
+      "name": "SiCepat Senayan",
+      "courier": "SiCepat",
+      "lat": -6.2255,
+      "lon": 106.8056,
+      "address": "Jl. Senayan, Kebayoran Baru, Jakarta Selatan 12190",
+      "phone": "(021) 7242-5555",
+      "operatingHours": "08:00 - 18:00"
+    },
+    {
+      "id": "jne-kb",
+      "name": "JNE Kebayoran Baru",
+      "courier": "JNE",
+      "lat": -6.2448,
+      "lon": 106.7973,
+      "address": "Jl. Kebayoran Baru No. 89, Kebayoran Baru, Jakarta Selatan",
+      "phone": "(021) 2550-1111",
+      "operatingHours": "08:30 - 17:30"
+    },
+    {
+      "id": "jne-ps",
+      "name": "JNE Pondok Indah",
+      "courier": "JNE",
+      "lat": -6.2617,
+      "lon": 106.7820,
+      "address": "Jl. Pondok Indah Blok 1A, Pondok Indah, Jakarta Selatan",
+      "phone": "(021) 2550-2222",
+      "operatingHours": "08:30 - 17:30"
+    },
+    {
+      "id": "jne-senayan",
+      "name": "JNE Senayan",
+      "courier": "JNE",
+      "lat": -6.2255,
+      "lon": 106.8056,
+      "address": "Jl. Senayan Raya, Kebayoran Baru, Jakarta Selatan",
+      "phone": "(021) 2550-3333",
+      "operatingHours": "08:30 - 17:30"
+    },
+    {
+      "id": "jne-kuningan",
+      "name": "JNE Kuningan",
+      "courier": "JNE",
+      "lat": -6.2230,
+      "lon": 106.8240,
+      "address": "Jl. Kuningan Persada, Kuningan, Jakarta Selatan",
+      "phone": "(021) 2550-4444",
+      "operatingHours": "08:30 - 17:30"
+    },
+    {
+      "id": "jt-melawai",
+      "name": "J&T Melawai",
+      "courier": "J&T Express",
+      "lat": -6.2428,
+      "lon": 106.7994,
+      "address": "Jl. Melawai Raya, Kebayoran Baru, Jakarta Selatan 12160",
+      "phone": "(021) 3815-5000",
+      "operatingHours": "07:00 - 19:00"
+    },
+    {
+      "id": "jt-gatot",
+      "name": "J&T Gatot Subroto",
+      "courier": "J&T Express",
+      "lat": -6.2369,
+      "lon": 106.8169,
+      "address": "Jl. Gatot Subroto, Kuningan, Jakarta Selatan",
+      "phone": "(021) 3815-5001",
+      "operatingHours": "07:00 - 19:00"
+    },
+    {
+      "id": "jt-kuningan",
+      "name": "J&T Kuningan",
+      "courier": "J&T Express",
+      "lat": -6.2230,
+      "lon": 106.8240,
+      "address": "Jl. Kuningan Persada, Kuningan, Jakarta Selatan",
+      "phone": "(021) 3815-5002",
+      "operatingHours": "07:00 - 19:00"
+    },
+    {
+      "id": "jt-senayan",
+      "name": "J&T Senayan",
+      "courier": "J&T Express",
+      "lat": -6.2255,
+      "lon": 106.8056,
+      "address": "Jl. Senayan, Kebayoran Baru, Jakarta Selatan 12190",
+      "phone": "(021) 3815-5003",
+      "operatingHours": "07:00 - 19:00"
+    }
+  ]
+}

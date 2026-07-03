@@ -1,0 +1,6 @@
+{
+  "name": "RE-LOVE",
+  "description": "Marketplace fashion preloved kelas atas dengan kurasi terverifikasi, harga dinamis, dan sistem escrow aman.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
