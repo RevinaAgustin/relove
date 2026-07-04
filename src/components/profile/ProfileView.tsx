@@ -61,26 +61,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         // Fallback
       }
     }
-    const defaultAddrs = [
-      {
-        id: 'addr-1',
-        name: 'Budi Santoso',
-        phone: '(+62) 812-3456-7890',
-        fullAddress: 'Jl. Jenderal Sudirman No. 45, Apartemen Senayan City Residence, Tower A, Lantai 12, Unit 1205. Kebayoran Baru',
-        city: 'Jakarta Selatan',
-        postalCode: '12190',
-        isDefault: true,
-      },
-      {
-        id: 'addr-2',
-        name: 'Budi Santoso (Kantor)',
-        phone: '(+62) 812-1122-3344',
-        fullAddress: 'Gedung Tokopedia Tower Lantai 22, Jl. Prof. DR. Satrio No. 3, Karet Semanggi, Setiabudi',
-        city: 'Jakarta Selatan',
-        postalCode: '12940',
-        isDefault: false,
-      }
-    ];
+    const defaultAddrs: any[] = [];
     localStorage.setItem('re_love_addresses', JSON.stringify(defaultAddrs));
     return defaultAddrs;
   });
@@ -404,26 +385,47 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       <form
                         onSubmit={(e) => {
                           e.preventDefault();
-                          if (!inputShopName.trim()) {
+                          const trimmedShop = inputShopName.trim();
+                          if (!trimmedShop) {
                             alert('Silakan isi nama toko Anda.');
                             return;
                           }
+
+                          // Check if another user already has the same shopName
+                          const savedUsers = localStorage.getItem('re_love_users');
+                          let shopExists = false;
+                          if (savedUsers) {
+                            try {
+                              const parsedUsers = JSON.parse(savedUsers);
+                              shopExists = parsedUsers.some((u: any) => 
+                                u.email !== userProfile?.email && 
+                                u.shopName && 
+                                u.shopName.toLowerCase().trim() === trimmedShop.toLowerCase().trim()
+                              );
+                            } catch (e) {}
+                          }
+
+                          if (shopExists) {
+                            alert('Nama toko ini sudah digunakan oleh pengguna lain. Silakan pilih nama lain.');
+                            return;
+                          }
+
                           if (onUpdateProfile) {
                             const updated = {
                               ...userProfile,
-                              shopName: inputShopName.trim()
+                              shopName: trimmedShop
                             };
                             onUpdateProfile(updated);
                             // Save in localStorage immediately
                             localStorage.setItem('re_love_active_user', JSON.stringify(updated));
                             localStorage.setItem('re_love_user_profile', JSON.stringify(updated));
                             
-                            const savedUsers = localStorage.getItem('re_love_users');
-                            if (savedUsers) {
+                            const savedUsersList = localStorage.getItem('re_love_users');
+                            if (savedUsersList) {
                               try {
-                                const parsedUsers = JSON.parse(savedUsers);
+                                const parsedUsers = JSON.parse(savedUsersList);
                                 const updatedUsers = parsedUsers.map((u: any) => 
-                                  u.email === userProfile?.email ? { ...u, shopName: inputShopName.trim() } : u
+                                  u.email === userProfile?.email ? { ...u, shopName: trimmedShop } : u
                                 );
                                 localStorage.setItem('re_love_users', JSON.stringify(updatedUsers));
                               } catch (e) {}
@@ -451,7 +453,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                           className="bg-[#002d1c] text-white py-3.5 rounded-xl text-xs font-black hover:opacity-95 transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                         >
                           <Check size={16} />
-                          <span>Buat Toko & Tambah Listing</span>
+                          <span>Buka Toko</span>
                         </button>
                       </form>
                     </div>

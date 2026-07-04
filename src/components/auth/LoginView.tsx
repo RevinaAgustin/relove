@@ -103,9 +103,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
       }
 
       const emailExists = users.some((user) => user.email.toLowerCase() === normalizedEmail);
+      const nameExists = users.some((user) => user.name.toLowerCase().trim() === fullName.toLowerCase().trim());
       if (emailExists) {
         setIsLoading(false);
-        setError('Email ini sudah terdaftar. Silakan masuk ke akun Anda atau gunakan email lain.');
+        setError('Email ini sudah terdaftar. Silakan gunakan email lain.');
+        return;
+      }
+      if (nameExists) {
+        setIsLoading(false);
+        setError('Nama pengguna ini sudah terdaftar. Silakan gunakan nama lain.');
         return;
       }
 
@@ -121,15 +127,15 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
 
       const nextUsers = [...users, newUser];
       localStorage.setItem('re_love_users', JSON.stringify(nextUsers));
-      localStorage.setItem('re_love_active_user', JSON.stringify(buildProfile(newUser)));
-      localStorage.setItem('re_love_user_profile', JSON.stringify(buildProfile(newUser)));
 
       setIsLoading(false);
       setSuccess(true);
       setTimeout(() => {
-        onLoginSuccess(buildProfile(newUser));
-        navigate('catalog');
-      }, 1000);
+        setSuccess(false);
+        setIsLoginTab(true);
+        setPassword('');
+        setError('Pendaftaran berhasil! Silakan masukkan kata sandi Anda untuk masuk.');
+      }, 2000);
     }, 1200);
   };
 

@@ -239,6 +239,23 @@ export default function App() {
 
   // Navigator helper
   const navigate = (screen: Screen) => {
+    if (
+      (screen === 'create-listing-info' ||
+        screen === 'create-listing-photo' ||
+        screen === 'create-listing-price' ||
+        screen === 'create-listing-review' ||
+        screen === 'seller-products' ||
+        screen === 'seller-finance' ||
+        screen === 'seller-orders') &&
+      !userProfile.shopName
+    ) {
+      alert('Silakan buka toko terlebih dahulu sebelum menggunakan fitur penjualan.');
+      setProfileTab('seller');
+      setCurrentScreen('profile');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (screen === 'explore' || screen === 'catalog') {
       setLastProductListScreen(screen);
     }
@@ -252,7 +269,6 @@ export default function App() {
       setProfileTab('seller');
       setCurrentScreen('profile');
     } else if (screen === 'profile') {
-      setProfileTab('orders');
       setCurrentScreen('profile');
     } else {
       setCurrentScreen(screen);

@@ -65,9 +65,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <div className="relative w-full aspect-[4/3] bg-[#f0edec] rounded-xl overflow-hidden group">
               <img
                 alt={product.name}
-                className={`w-full h-full object-cover transition-all duration-300 ${
-                  productPhotos[activePhotoIndex].isZoomed ? 'scale-150 origin-center' : ''
-                }`}
+                className={`w-full h-full object-cover transition-all duration-300 ${productPhotos[activePhotoIndex].isZoomed ? 'scale-150 origin-center' : ''
+                  }`}
                 referrerPolicy="no-referrer"
                 src={productPhotos[activePhotoIndex].url}
               />
@@ -92,7 +91,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                 </div>
               )}
             </div>
-            
+
             {/* Thumbnails (5-Point Verified Check) */}
             <div className="flex gap-3 p-4 overflow-x-auto snap-x scrollbar-none justify-start mt-2">
               {productPhotos.map((photo, i) => {
@@ -101,9 +100,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   <button
                     key={i}
                     onClick={() => setActivePhotoIndex(i)}
-                    className={`flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all relative flex flex-col p-1.5 bg-[#fcf9f8] shadow-sm cursor-pointer ${
-                      isActive ? 'border-[#002d1c] bg-[#1a4331]/5' : 'border-transparent opacity-75 hover:opacity-100'
-                    }`}
+                    className={`flex-shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all relative flex flex-col p-1.5 bg-[#fcf9f8] shadow-sm cursor-pointer ${isActive ? 'border-[#002d1c] bg-[#1a4331]/5' : 'border-transparent opacity-75 hover:opacity-100'
+                      }`}
                   >
                     <div className="w-full h-14 rounded-lg overflow-hidden relative">
                       <img
@@ -131,7 +129,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
             <h3 className="font-display text-[#1c1b1b] font-bold text-xl mb-4">Deskripsi Produk</h3>
             <div className="font-body text-sm text-[#414944] space-y-4 leading-relaxed">
               <p>{product.description}</p>
-              <p>Merek {product.brand} asli, bukan tiruan. Kain denim/wol organik berkualitas tinggi yang kokoh, dijamin asri seiring penuaan bahan natural.</p>
+              <p> </p>
               <div className="pt-4 border-t border-[#c1c8c2]/20">
                 <h4 className="font-geist text-xs font-bold uppercase tracking-wider text-[#1c1b1b] mb-3">Spesifikasi Detail</h4>
                 <ul className="list-disc pl-5 space-y-2 text-xs font-geist text-[#414944]">
@@ -160,7 +158,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               <p className="text-[11px] font-geist text-[#414944]/70 uppercase tracking-widest font-bold mb-4">
                 BRAND: {product.brand}
               </p>
-              
+
               <div className="border-t border-[#f0edec] pt-5 mt-2 flex items-baseline gap-2">
                 <span className="text-[32px] font-display font-extrabold text-[#002d1c]">
                   Rp {product.price.toLocaleString('id-ID')}
@@ -213,7 +211,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     <Edit2 size={16} />
                     <span>Edit Detail Barang</span>
                   </button>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => {
@@ -224,11 +222,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                           });
                         }
                       }}
-                      className={`w-full bg-transparent border text-xs py-4 rounded-[16px] font-geist font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 cursor-pointer ${
-                        product.isArchived 
-                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' 
+                      className={`w-full bg-transparent border text-xs py-4 rounded-[16px] font-geist font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 cursor-pointer ${product.isArchived
+                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                           : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
-                      }`}
+                        }`}
                     >
                       <Archive size={14} />
                       <span>{product.isArchived ? 'Aktifkan' : 'Arsipkan'}</span>
@@ -288,7 +285,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     onClick={() => onGoToShop(product.sellerName)}
                     className="px-4 py-2 bg-[#f0edec] hover:bg-[#ebe7e7] text-xs font-geist font-bold text-[#1c1b1b] rounded-full transition-colors cursor-pointer"
                   >
