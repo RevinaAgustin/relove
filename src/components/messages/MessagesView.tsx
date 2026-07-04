@@ -35,95 +35,19 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
       } catch (e) {}
     }
 
-    return [
-      {
-        id: 'chat-1',
-        sellerName: 'Studio Vintage JKT',
-        sellerRating: 4.9,
-        productName: 'Jaket Denim Vintage Classic',
-        productImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA7wNUa7UfVaHOj4tcRjHiAPDLJEsJgvVKfcMS_ChAwOr8-SnSP7SVKHcX7epJNB4BwaCu6GFsWDmuvIi6af0cJ682kwunY4gt0mpxc3kC9dM7kbQFf7NOqtPxAW-AOreu6E2XBd5MIINaStAXk1AOsh03RMB1jyhCW4w7M01YB6ZT4Vjb9ARtALwvBB0R9B5OfJKz44ICs-ZsWP3KfZ4jxlJs9bkpzM-Rqjg7-zbn5igPEpGW8OV28ionyrGnYi2l3KdLvzhM_xjeK',
-        lastMessage: 'Betul kak, oversized retro khas era 90-an. Lebar dada sekitar 62cm. Sangat cocok buat style layering!',
-        lastMessageTime: '10.45',
-        unread: true,
-        messages: [
-          {
-            id: 'm1',
-            sender: 'seller',
-            text: 'Halo Kak! Ada yang bisa kami bantu mengenai Jaket Denim Vintage Classic-nya? Kondisinya sangat mulus lho kak, original Balenciaga.',
-            timestamp: '10.30',
-          },
-          {
-            id: 'm2',
-            sender: 'buyer',
-            text: 'Halo Kak! Apakah ukurannya L-nya oversized banget ya? Saya biasa pakai size M tapi suka style longgar.',
-            timestamp: '10.35',
-          },
-          {
-            id: 'm3',
-            sender: 'seller',
-            text: 'Betul kak, oversized retro khas era 90-an. Lebar dada sekitar 62cm. Sangat cocok buat style layering!',
-            timestamp: '10.45',
-          },
-        ],
-      },
-      {
-        id: 'chat-2',
-        sellerName: 'UrbanArchive Vintage',
-        sellerRating: 4.8,
-        productName: 'Sepatu Boots Kulit',
-        productImage: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvoMg3VzgLSzYsclwQT5TJ8egglJgiFkH8AqZADcp_3iAZricvzL6gTbKHy_kOCweg1XQhVfR57X18nrt0BWc--hD4Xiq-18h6_U8hLDqn9W-Uo-R9YvGATAURewIiqNuqKcCMtj47ha4waTap2wPrkjWp6bfN46DYKDQC5pfS4lI8NWaPgxwXCSJGbZ5bq2pGDZyrbZhpWUpr2DS4r4twWIFd7YZy70IfFRWSaayGpFJNQr9trpBuQarv0rFSwt6PSV-ygX4H2zHq',
-        lastMessage: 'Pas untuk kaki 26.5cm - 27cm kak. Insolenya empuk sekali.',
-        lastMessageTime: 'Kemarin',
-        unread: false,
-        messages: [
-          {
-            id: 'm4',
-            sender: 'seller',
-            text: 'Halo kak, Sepatu Boots Kulit Common Projects-nya masih ready ya kak. Kulit asli full-grain premium, jarang ada di pasaran.',
-            timestamp: 'Kemarin 14.15',
-          },
-          {
-            id: 'm5',
-            sender: 'buyer',
-            text: 'Kira-kira kalau ukuran 42 ini pas untuk panjang kaki berapa cm kak? Takut kesempitan.',
-            timestamp: 'Kemarin 14.20',
-          },
-          {
-            id: 'm6',
-            sender: 'seller',
-            text: 'Pas untuk kaki 26.5cm - 27cm kak. Insolenya empuk sekali.',
-            timestamp: 'Kemarin 14.22',
-          },
-        ],
-      },
-      {
-        id: 'chat-3',
-        sellerName: 'Dinda Thrift Store',
-        sellerRating: 4.7,
-        productName: 'Celana Cargo Corduroy',
-        productImage: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=200',
-        lastMessage: 'Ada sedikit defect kikis pemakaian di ujung saku belakang kak, tapi samar banget.',
-        lastMessageTime: '3 Hari Lalu',
-        unread: false,
-        messages: [
-          {
-            id: 'm7',
-            sender: 'buyer',
-            text: 'Misi kak, celana cargonya ada defect sobek atau noda bandel ga ya?',
-            timestamp: '3 Hari Lalu',
-          },
-          {
-            id: 'm8',
-            sender: 'seller',
-            text: 'Ada sedikit defect kikis pemakaian di ujung saku belakang kak, tapi samar banget.',
-            timestamp: '3 Hari Lalu',
-          },
-        ],
-      },
-    ];
+    return [];
   });
 
-  const [activeThreadId, setActiveThreadId] = useState<string>('chat-1');
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(() => {
+    const saved = localStorage.getItem('re_love_chats');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.length > 0) return parsed[0].id;
+      } catch (e) {}
+    }
+    return null;
+  });
   const [inputText, setInputText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);

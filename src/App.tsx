@@ -32,7 +32,7 @@ import { Product, Order, Screen, CartItem } from './types';
 
 export default function App() {
   // One-time reset to clear previous dummy data for testing
-  if (typeof window !== 'undefined' && !localStorage.getItem('re_love_db_cleared_v3')) {
+  if (typeof window !== 'undefined' && !localStorage.getItem('re_love_db_cleared_v4')) {
     localStorage.removeItem('relove_products');
     localStorage.removeItem('re_love_users');
     localStorage.removeItem('re_love_active_user');
@@ -42,7 +42,9 @@ export default function App() {
     localStorage.removeItem('re_love_wishlist');
     localStorage.removeItem('re_love_cart');
     localStorage.removeItem('re_love_addresses');
-    localStorage.setItem('re_love_db_cleared_v3', 'true');
+    localStorage.removeItem('re_love_seller_balance');
+    localStorage.removeItem('re_love_reviews');
+    localStorage.setItem('re_love_db_cleared_v4', 'true');
   }
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -161,64 +163,18 @@ export default function App() {
   };
   
   // Default active list of orders for the simulator
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: 'ord-seller-1',
-      productId: 'leather-boots',
-      productName: 'Sepatu Boots Kulit',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvoMg3VzgLSzYsclwQT5TJ8egglJgiFkH8AqZADcp_3iAZricvzL6gTbKHy_kOCweg1XQhVfR57X18nrt0BWc--hD4Xiq-18h6_U8hLDqn9W-Uo-R9YvGATAURewIiqNuqKcCMtj47ha4waTap2wPrkjWp6bfN46DYKDQC5pfS4lI8NWaPgxwXCSJGbZ5bq2pGDZyrbZhpWUpr2DS4r4twWIFd7YZy70IfFRWSaayGpFJNQr9trpBuQarv0rFSwt6PSV-ygX4H2zHq',
-      sellerName: 'UrbanArchive Vintage',
-      totalAmount: 467500,
-      courier: 'J&T Express',
-      courierFee: 15000,
-      serviceFee: 2500,
-      status: 'Waiting', // Stage 1: Incoming order
-      resi: '',
-      date: 'Hari ini',
-    },
-    {
-      id: 'ord-seller-2',
-      productId: 'leather-boots',
-      productName: 'Sepatu Boots Kulit',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvoMg3VzgLSzYsclwQT5TJ8egglJgiFkH8AqZADcp_3iAZricvzL6gTbKHy_kOCweg1XQhVfR57X18nrt0BWc--hD4Xiq-18h6_U8hLDqn9W-Uo-R9YvGATAURewIiqNuqKcCMtj47ha4waTap2wPrkjWp6bfN46DYKDQC5pfS4lI8NWaPgxwXCSJGbZ5bq2pGDZyrbZhpWUpr2DS4r4twWIFd7YZy70IfFRWSaayGpFJNQr9trpBuQarv0rFSwt6PSV-ygX4H2zHq',
-      sellerName: 'UrbanArchive Vintage',
-      totalAmount: 467500,
-      courier: 'SiCepat REG',
-      courierFee: 15000,
-      serviceFee: 2500,
-      status: 'Paid', // Stage 2: Ready to Ship
-      resi: '',
-      date: 'Kemarin',
-    },
-    {
-      id: 'ord-seller-3',
-      productId: 'leather-boots',
-      productName: 'Sepatu Boots Kulit',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvoMg3VzgLSzYsclwQT5TJ8egglJgiFkH8AqZADcp_3iAZricvzL6gTbKHy_kOCweg1XQhVfR57X18nrt0BWc--hD4Xiq-18h6_U8hLDqn9W-Uo-R9YvGATAURewIiqNuqKcCMtj47ha4waTap2wPrkjWp6bfN46DYKDQC5pfS4lI8NWaPgxwXCSJGbZ5bq2pGDZyrbZhpWUpr2DS4r4twWIFd7YZy70IfFRWSaayGpFJNQr9trpBuQarv0rFSwt6PSV-ygX4H2zHq',
-      sellerName: 'UrbanArchive Vintage',
-      totalAmount: 467500,
-      courier: 'SiCepat REG',
-      courierFee: 15000,
-      serviceFee: 2500,
-      status: 'Shipped', // Stage 3: Shipped
-      resi: 'SICEPAT-9382103829',
-      date: '2 hari lalu',
-    },
-    {
-      id: 'ord-seller-4',
-      productId: 'leather-boots',
-      productName: 'Sepatu Boots Kulit',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvoMg3VzgLSzYsclwQT5TJ8egglJgiFkH8AqZADcp_3iAZricvzL6gTbKHy_kOCweg1XQhVfR57X18nrt0BWc--hD4Xiq-18h6_U8hLDqn9W-Uo-R9YvGATAURewIiqNuqKcCMtj47ha4waTap2wPrkjWp6bfN46DYKDQC5pfS4lI8NWaPgxwXCSJGbZ5bq2pGDZyrbZhpWUpr2DS4r4twWIFd7YZy70IfFRWSaayGpFJNQr9trpBuQarv0rFSwt6PSV-ygX4H2zHq',
-      sellerName: 'UrbanArchive Vintage',
-      totalAmount: 467500,
-      courier: 'SiCepat REG',
-      courierFee: 15000,
-      serviceFee: 2500,
-      status: 'Received', // Stage 4: Selesai
-      resi: 'SICEPAT-102930283',
-      date: '4 hari lalu',
-    },
-  ]);
+  const [orders, setOrders] = useState<Order[]>(() => {
+    const saved = localStorage.getItem('re_love_orders');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('re_love_orders', JSON.stringify(orders));
+    } catch (e) {
+      console.error('Failed to save orders to localStorage:', e);
+    }
+  }, [orders]);
 
   // Current order undergoing active transactional processing
   const [activePayingOrder, setActivePayingOrder] = useState<Order | null>(null);

@@ -38,6 +38,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [activeProfileTab, setActiveTab] = useState<'wishlist' | 'orders' | 'seller'>(initialTab || 'orders');
   const [activeChartFilter, setActiveChartFilter] = useState<'7' | '30'>('7');
   const [isFinanceModalOpen, setIsFinanceModalOpen] = useState(false);
+  const [reviews, setReviews] = useState<any[]>(() => {
+    const saved = localStorage.getItem('re_love_reviews');
+    return saved ? JSON.parse(saved) : [];
+  });
   const activeShopName = userProfile?.shopName || 'UrbanArchive Vintage';
   const myProducts = products.filter((p) => p.sellerName === activeShopName);
   const buyerOrders = orders.filter((o) => !o.id.startsWith('ord-seller-'));
@@ -147,21 +151,22 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   // Simulated chart indices values
+  const hasOrders = sellerOrders.length > 0;
   const dataset = {
     '7': [
-      { day: 'Sen', value: 'h-10' },
-      { day: 'Sel', value: 'h-24' },
-      { day: 'Rab', value: 'h-14' },
-      { day: 'Kam', value: 'h-36 bg-[#002d1c]' },
-      { day: 'Jum', value: 'h-28' },
-      { day: 'Sab', value: 'h-20' },
-      { day: 'Min', value: 'h-8' },
+      { day: 'Sen', value: hasOrders ? 'h-10' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Sel', value: hasOrders ? 'h-24' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Rab', value: hasOrders ? 'h-14' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Kam', value: hasOrders ? 'h-36 bg-[#002d1c]' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Jum', value: hasOrders ? 'h-28' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Sab', value: hasOrders ? 'h-20' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'Min', value: hasOrders ? 'h-8' : 'h-2 bg-[#c0edd3]/30' },
     ],
     '30': [
-      { day: 'M1', value: 'h-24' },
-      { day: 'M2', value: 'h-32 bg-[#002d1c]' },
-      { day: 'M3', value: 'h-16' },
-      { day: 'M4', value: 'h-28' },
+      { day: 'M1', value: hasOrders ? 'h-24' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'M2', value: hasOrders ? 'h-32 bg-[#002d1c]' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'M3', value: hasOrders ? 'h-16' : 'h-2 bg-[#c0edd3]/30' },
+      { day: 'M4', value: hasOrders ? 'h-28' : 'h-2 bg-[#c0edd3]/30' },
     ],
   };
 
@@ -401,37 +406,46 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               {/* Earnings Card */}
               <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
                 <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Total Pendapatan</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">Rp 12.450.000</h3>
+                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
+                  Rp {sellerOrders
+                    .filter((o) => o.status === 'Received' || o.status === 'Reviewed')
+                    .reduce((sum, o) => sum + o.totalAmount, 0)
+                    .toLocaleString('id-ID')}
+                </h3>
                 <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
                   <TrendingUp size={12} className="mr-1" />
-                  <span>+12.4% meningkat bulan ini</span>
+                  <span>{sellerOrders.length > 0 ? '+12.4% meningkat bulan ini' : 'Belum ada transaksi'}</span>
                 </div>
               </div>
 
               {/* New Orders */}
               <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
                 <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Pesanan Masuk</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">14 Paket</h3>
+                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{sellerOrders.length} Paket</h3>
                 <div className="flex items-center mt-3 text-[#ba1a1a] text-[9px] font-bold">
                   <AlertCircle size={12} className="mr-1" />
-                  <span>3 Perlu segera di-proses</span>
+                  <span>{sellerOrders.filter(o => o.status === 'Waiting' || o.status === 'Paid').length} Perlu segera di-proses</span>
                 </div>
               </div>
 
               {/* Active counting */}
               <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
                 <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Listing Aktif</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{products.length} Barang</h3>
-                <p className="text-[9px] text-[#414944]/70 mt-3 font-normal">2 produk terjual 7 hari terakhir</p>
+                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{myProducts.length} Barang</h3>
+                <p className="text-[9px] text-[#414944]/70 mt-3 font-normal">
+                  {myProducts.filter(p => p.isArchived).length} barang diarsipkan
+                </p>
               </div>
 
               {/* Response count */}
               <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
                 <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Tingkat Penjualan</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">98% Responsif</h3>
+                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
+                  {sellerOrders.length > 0 ? '100% Responsif' : 'Baru Bergabung'}
+                </h3>
                 <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
                   <ShieldCheck size={12} className="mr-1" />
-                  <span>Sangat Tanggap & Cepat</span>
+                  <span>{sellerOrders.length > 0 ? 'Sangat Tanggap & Cepat' : 'Belum ada ulasan/pesanan'}</span>
                 </div>
               </div>
             </div>
@@ -609,31 +623,28 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             {/* 5. Ulasan Pembeli Terbaru */}
             <div className="border-t border-[#f0edec] pt-6 mb-2">
               <h3 className="font-display font-bold text-sm text-[#002d1c] mb-4">Ulasan Pembeli</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[#fcf9f8] border border-[#f0edec] rounded-[20px] flex flex-col gap-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#1c1b1b]">Andi Pratama</span>
-                    <div className="flex text-yellow-500 gap-0.5">
-                      {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} className="fill-current text-yellow-500" />)}
+              {reviews.length === 0 ? (
+                <p className="text-left text-[11px] text-[#414944]/70">Belum ada ulasan untuk toko Anda.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {reviews.map((rev) => (
+                    <div key={rev.id} className="p-4 bg-[#fcf9f8] border border-[#f0edec] rounded-[20px] flex flex-col gap-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-[#1c1b1b]">{rev.buyerName}</span>
+                        <div className="flex text-yellow-500 gap-0.5">
+                          {Array.from({ length: rev.stars }).map((_, s) => (
+                            <Star key={s} size={10} className="fill-current text-yellow-500" />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-[#414944] italic leading-normal">
+                        "{rev.text}"
+                      </p>
+                      <span className="text-[9px] text-[#414944]/55 text-right font-geist mt-1">{rev.date}</span>
                     </div>
-                  </div>
-                  <p className="text-[#414944] italic leading-normal">
-                    "Kualitas jaket vintage-nya luar biasa! Benar-benar tebal, sesuai, dan cepat diproses."
-                  </p>
+                  ))}
                 </div>
-
-                <div className="p-4 bg-[#fcf9f8] border border-[#f0edec] rounded-[20px] flex flex-col gap-2 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-[#1c1b1b]">Siti Aminah</span>
-                    <div className="flex text-yellow-500 gap-0.5">
-                      {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} className={s <= 4 ? "fill-current" : "text-[#ebe7e7]"} />)}
-                    </div>
-                  </div>
-                  <p className="text-[#414944] italic leading-normal">
-                    "Cantik sekali kemejanya. Bersih, wangi, packing rapi dari dus daur ulang."
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         )}
