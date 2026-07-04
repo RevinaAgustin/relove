@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { ExploreView } from './components/beranda/ExploreView';
@@ -32,8 +32,24 @@ import { Product, Order, Screen, CartItem } from './types';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(INITIAL_PRODUCTS[0]);
+  const [products, setProducts] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('relove_products');
+    return saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('relove_products', JSON.stringify(products));
+    } catch (e) {
+      console.error('Failed to save products to localStorage (quota exceeded):', e);
+    }
+  }, [products]);
+
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(() => {
+    const saved = localStorage.getItem('relove_products');
+    const initialList = saved ? JSON.parse(saved) : INITIAL_PRODUCTS;
+    return initialList.length > 0 ? initialList[0] : null;
+  });
   const [currentScreen, setCurrentScreen] = useState<Screen>('explore');
   const [selectedSellerName, setSelectedSellerName] = useState<string>('');
   const [shopBackScreen, setShopBackScreen] = useState<Screen>('explore');
@@ -193,6 +209,7 @@ export default function App() {
   // Current order undergoing active transactional processing
   const [activePayingOrder, setActivePayingOrder] = useState<Order | null>(null);
   const [productBeingEdited, setProductBeingEdited] = useState<Product | null>(null);
+  const [detailBackScreen, setDetailBackScreen] = useState<Screen>('explore');
   
   // Default active tab inside Profile screen
   const [profileTab, setProfileTab] = useState<'wishlist' | 'orders' | 'seller'>('orders');
@@ -275,6 +292,7 @@ export default function App() {
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
+    setDetailBackScreen(currentScreen);
     navigate('product-detail');
   };
 
@@ -456,7 +474,7 @@ export default function App() {
     navigate('profile');
   };
 
-  const wishlistProducts = products.filter((p) => wishlist.includes(p.id) && !p.isDraft);
+  const wishlistProducts = products.filter((p) => wishlist.includes(p.id) && !p.isArchived);
 
   // Visual layout shell styling
   return (
@@ -493,7 +511,7 @@ export default function App() {
         {currentScreen === 'explore' && (
           <ExploreView
             navigate={navigate}
-            products={products.filter((p) => !p.isDraft)}
+            products={products.filter((p) => !p.isArchived)}
             toggleWishlist={toggleWishlist}
             wishlist={wishlist}
             onSelectProduct={handleSelectProduct}
@@ -511,7 +529,7 @@ export default function App() {
         {currentScreen === 'catalog' && (
           <CatalogView
             navigate={navigate}
-            products={products.filter((p) => !p.isDraft)}
+            products={products.filter((p) => !p.isArchived)}
             toggleWishlist={toggleWishlist}
             wishlist={wishlist}
             onSelectProduct={handleSelectProduct}
@@ -530,20 +548,42 @@ export default function App() {
             product={selectedProduct || products[0]}
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
-            onGoBack={() => navigate(lastProductListScreen)}
+            onGoBack={() => {
+              if (detailBackScreen === 'profile' && profileTab === 'seller') {
+                navigate('seller-dashboard');
+              } else {
+                navigate(detailBackScreen);
+              }
+            }}
             onToggleWishlist={toggleWishlist}
             onGoToShop={(sellerName) => {
               setSelectedSellerName(sellerName);
               navigate('seller-shop');
             }}
             userProfile={userProfile}
+            onEditProduct={(prod) => {
+              setProductBeingEdited(prod);
+              navigate('create-listing-info');
+            }}
+            onDeleteProduct={(productId) => {
+              handleDeleteProduct(productId);
+              if (detailBackScreen === 'profile' && profileTab === 'seller') {
+                navigate('seller-dashboard');
+              } else {
+                navigate(detailBackScreen);
+              }
+            }}
+            onUpdateProduct={(prod) => {
+              handleUpdateProduct(prod);
+              setSelectedProduct(prod);
+            }}
           />
         )}
 
         {currentScreen === 'seller-shop' && (
           <SellerShopView
             sellerName={selectedSellerName}
-            products={products.filter((p) => !p.isDraft)}
+            products={products.filter((p) => !p.isArchived)}
             wishlist={wishlist}
             toggleWishlist={toggleWishlist}
             onSelectProduct={handleSelectProduct}
@@ -687,6 +727,7 @@ export default function App() {
               setProductBeingEdited(prod);
               navigate('create-listing-info');
             }}
+            onPreviewProduct={handleSelectProduct}
             userProfile={userProfile}
           />
         )}

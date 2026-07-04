@@ -58,7 +58,7 @@ export const SellerShopView: React.FC<SellerShopViewProps> = ({
   // Mock Reviews data for two-row carousel marquee
   const row1Reviews = [
     { name: 'Sarah Jones', text: 'Jaket denimnya mulus banget! Bersih, wangi, kerasa eksklusif. Recommended!', stars: 5, date: '2 hari lalu' },
-    { name: 'Budi Santoso', text: 'Pengemasan sirkularnya keren, pakai kardus daur ulang rapi. Pengiriman cepat.', stars: 5, date: '1 minggu lalu' },
+    { name: 'Budi Santoso', text: 'Pengemasannya keren, pakai kardus daur ulang rapi. Pengiriman cepat.', stars: 5, date: '1 minggu lalu' },
     { name: 'Dinda Kirana', text: 'Barang sesuai deskripsi, minusnya hampir gak kelihatan. Mantap!', stars: 5, date: '3 hari lalu' },
     { name: 'Rian Adiputra', text: 'Respon penjual sangat ramah dan sabar jawab pertanyaan detail.', stars: 4, date: '2 minggu lalu' },
     { name: 'Amanda Putri', text: 'Kaos vintage-nya original Balenciaga asli. Suka banget!', stars: 5, date: '5 hari lalu' }
@@ -69,7 +69,7 @@ export const SellerShopView: React.FC<SellerShopViewProps> = ({
     { name: 'Eka Saputra', text: 'Sterilisasi ozon-nya beneran bikin baju preloved gak bau apek sama sekali.', stars: 5, date: '12 hari lalu' },
     { name: 'Fitri Nur', text: 'Rating bintang 5 layak banget buat pelayanan secepat ini!', stars: 5, date: '4 hari lalu' },
     { name: 'Toni Rian', text: 'Defect-nya jujur banget digambarin, pas nyampe malah samar.', stars: 5, date: '2 hari lalu' },
-    { name: 'Budi Mukti', text: 'Boots kulitnya masih kinclong, dapet box sirkular kokoh.', stars: 5, date: '1 minggu lalu' }
+    { name: 'Budi Mukti', text: 'Boots kulitnya masih kinclong, dapet box kemasan kokoh.', stars: 5, date: '1 minggu lalu' }
   ];
 
   // Duplicate for smooth seamless loop marquee scrolling
@@ -196,7 +196,7 @@ export const SellerShopView: React.FC<SellerShopViewProps> = ({
             <h2 className="font-display text-[#002d1c] text-2xl font-extrabold tracking-tight">Katalog Toko</h2>
             <p className="text-xs text-[#414944]">
               {searchQuery.trim()
-                ? `Menampilkan ${filteredProducts.length} dari ${sellerProducts.length} barang kurasi sirkular`
+                ? `Menampilkan ${filteredProducts.length} dari ${sellerProducts.length} barang kurasi`
                 : `Menampilkan ${sellerProducts.length} barang dari toko ${sellerName}`
               }
             </p>

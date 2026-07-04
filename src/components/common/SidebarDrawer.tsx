@@ -126,7 +126,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                   <Heart size={20} className="text-[#002d1c]" />
                 )}
                 <h3 className="font-display font-black text-base text-[#002d1c] tracking-tight">
-                  {isCart ? 'Keranjang Belanja sirkular' : 'Wishlist Terkurasi'}
+                  {isCart ? 'Keranjang Belanja' : 'Wishlist Terkurasi'}
                 </h3>
                 <span className="text-[10px] font-mono bg-[#1a4331]/10 text-[#002d1c] font-bold px-2 py-0.5 rounded-full">
                   {activeCount} Item
@@ -152,7 +152,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                     <div className="space-y-1">
                       <h4 className="font-bold text-[#1c1b1b] text-sm">Keranjang Anda Kosong</h4>
                       <p className="text-xs text-[#414944] leading-relaxed max-w-[280px]">
-                        Temukan pakaian vintage & preloved berkualitas tinggi untuk memulai gaya hidup sirkular Anda.
+                        Temukan pakaian vintage & preloved berkualitas tinggi untuk melengkapi gaya hidup Anda.
                       </p>
                     </div>
                     <button
@@ -379,7 +379,7 @@ export const SidebarDrawer: React.FC<SidebarDrawerProps> = ({
                       </div>
                       <div className="flex justify-between items-center text-[10px] text-[#414944]">
                         <span className="flex items-center gap-1">
-                          Pajak & Biaya Layanan Sirkular <HelpCircle size={10} />
+                          Pajak & Biaya Layanan <HelpCircle size={10} />
                         </span>
                         <span className="text-[#3e6752] font-semibold">Tercakup & Terkurasi</span>
                       </div>

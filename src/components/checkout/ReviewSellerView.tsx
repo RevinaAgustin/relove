@@ -59,7 +59,7 @@ export const ReviewSellerView: React.FC<ReviewSellerViewProps> = ({
       <div className="text-center space-y-3">
         <h1 className="font-display text-[#002d1c] text-3xl font-extrabold tracking-tight">Bagaimana pesanan Anda?</h1>
         <p className="font-body text-sm text-[#414944] max-w-lg mx-auto">
-          Terima kasih telah berpartisipasi dan melestarikan ekosistem pakaian sirkular. Ulasan jujur Anda sangat membantu kurasi RE-LOVE.
+          Terima kasih telah berpartisipasi dan melestarikan ekosistem pakaian preloved. Ulasan jujur Anda sangat membantu kurasi RE-LOVE.
         </p>
       </div>
 

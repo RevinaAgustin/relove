@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { Heart, ShoppingBag, User, PlusCircle, ArrowLeftRight, Bell, MessageSquare } from 'lucide-react';
+import { Heart, ShoppingBag, User, PlusCircle, ArrowLeftRight, Bell, MessageSquare, LogIn } from 'lucide-react';
 import { Screen } from '../../types';
 
 const WANITA_COLUMNS = [
@@ -387,10 +387,10 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           <button 
             onClick={() => navigate('login')}
-            className="bg-[#002d1c] text-[#c0edd3] px-5 py-2 rounded-full font-geist text-xs hover:opacity-95 transition-all active:scale-95 shadow-sm font-black flex items-center gap-1"
+            className="p-2 text-[#414944] hover:text-[#002d1c] transition-colors relative"
+            title="Masuk / Daftar"
           >
-            <User size={13} className="text-[#c0edd3]" />
-            <span>Masuk / Daftar</span>
+            <LogIn size={20} />
           </button>
         )}
       </div>

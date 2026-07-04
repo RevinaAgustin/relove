@@ -251,7 +251,7 @@ export const SellerDashboardView: React.FC<SellerDashboardViewProps> = ({
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="font-bold text-[#1c1b1b]">Order #RL-2940</h4>
-                  <p className="text-[10px] text-[#414944] mt-0.5">1 Barang • Rp 215.000 • QRIS Escrow</p>
+                  <p className="text-[10px] text-[#414944] mt-0.5">1 Barang • Rp 215.000 • QRIS </p>
                 </div>
               </div>
 
@@ -270,7 +270,7 @@ export const SellerDashboardView: React.FC<SellerDashboardViewProps> = ({
             <span className="material-symbols-outlined text-4xl text-[#c0edd3] mb-4">swap_horiz</span>
             <h3 className="font-display font-extrabold text-lg mb-2">Ingin belanja mode?</h3>
             <p className="font-body text-[#ebe7e7]/80 text-xs mb-8 max-w-[220px]">
-              Klik tombol di bawah ini untuk beralih mode dan menjelajahi katalog sirkular terbaik.
+              Klik tombol di bawah ini untuk beralih mode dan menjelajahi katalog preloved terbaik.
             </p>
             <button
               onClick={onSwitchToBuyer}

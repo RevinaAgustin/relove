@@ -221,13 +221,13 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
   const getSellerReply = (sellerName: string, query: string): string => {
     const q = query.toLowerCase();
     if (q.includes('harga') || q.includes('nego') || q.includes('kurang')) {
-      return `Halo kak! Untuk barang preloved berkualitas ini harga kami sudah pas ya kak. Tapi tenang saja, sudah sirkular dan kami pack premium dengan kotak kertas daur ulang sirkular gratis kak! 😊`;
+      return `Halo kak! Untuk barang preloved berkualitas ini harga kami sudah pas ya kak. Tapi tenang saja, kami pack premium dengan kotak kertas daur ulang gratis kak! 😊`;
     }
     if (q.includes('kirim') || q.includes('ongkir') || q.includes('kapan')) {
       return `Jika pembayaran diverifikasi sebelum jam 16.00 WIB, paket langsung kami pickup sore ini juga melalui kurir SiCepat/JNE pilihan kakak. Yuk silakan diselesaikan checkout-nya! 🚚`;
     }
     if (q.includes('kondisi') || q.includes('minus') || q.includes('cacat')) {
-      return `Kondisi produk sangat prima sesuai dengan deskripsi dan foto di etalase kami kak. Semua telah melalui uji kurasi sterilisasi ozon sirkular kami, dijamin bersih, wangi, siap pakai! ✨`;
+      return `Kondisi produk sangat prima sesuai dengan deskripsi dan foto di etalase kami kak. Semua telah melalui uji kurasi sterilisasi ozon kami, dijamin bersih, wangi, siap pakai! ✨`;
     }
     return `Makasih pertanyaannya kak! Kemeja / baju ini super recommended banget. Silakan langsung checklist di keranjang atau klik 'Beli Sekarang' agar ga keduluan pembeli lain ya kak, karena stok preloved kami hanya ada 1 buah saja per item! 🙏💚`;
   };
@@ -263,7 +263,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
         </button>
         <div>
           <h2 className="font-display text-[#002d1c] text-3xl font-extrabold tracking-tight">Kotak Masuk Pesan</h2>
-          <p className="font-body text-xs text-[#414944] mt-1.5">Diskusikan kondisi pakaian preloved sirkular Anda langsung dengan para penjual terverifikasi.</p>
+          <p className="font-body text-xs text-[#414944] mt-1.5">Diskusikan kondisi pakaian preloved Anda langsung dengan para penjual terverifikasi.</p>
         </div>
       </div>
 
@@ -464,7 +464,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-xs text-[#414944]/60 space-y-3 font-geist">
               <MessageSquare className="text-[#c1c8c2]" size={48} />
               <h4 className="font-bold text-[#1c1b1b]">Pilih Percakapan</h4>
-              <p>Mulai diskusi sirkular Anda dengan para penjual terpercaya kami.</p>
+              <p>Mulai diskusi Anda dengan para penjual terpercaya kami.</p>
             </div>
           )}
         </div>

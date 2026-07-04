@@ -43,7 +43,10 @@ export interface Product {
   transactions?: number;
   responseTime?: string;
   stars?: number;
-  isDraft?: boolean;
+  isArchived?: boolean;
+  imageTag?: string;
+  imageMinus?: string;
+  imageDetail?: string;
 }
 
 export interface Order {

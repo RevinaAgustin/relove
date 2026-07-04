@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ArrowLeft, Check, X, Printer, Package, Landmark, Clipboard, Truck, AlertCircle, FileText, CheckCircle2, ShieldCheck, ArrowRight, MapPin, Download } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Check, X, Package, AlertCircle, CheckCircle2, ArrowRight, MapPin, Download } from 'lucide-react';
 import { Order } from '../../types';
 import { Breadcrumb } from '../common/Breadcrumb';
+import branchesData from '../../../branches.json';
 
 interface SellerOrdersViewProps {
   orders: Order[];
@@ -16,14 +17,54 @@ interface SellerOrdersViewProps {
   userProfile?: { name: string; shopName: string; email: string; phone: string; avatar: string };
 }
 
-// Map outlets locations using real coordinates
 interface Outlet {
   id: string;
   name: string;
-  distance: string;
+  partner: string;
   lat: number;
   lon: number;
+  address?: string;
+  phone?: string;
+  operatingHours?: string;
 }
+
+const branchesList: Outlet[] = ((branchesData as any).branches || []).map((b: any) => ({
+  id: b.id,
+  name: b.name,
+  partner: b.courier || b.partner || 'Mitra',
+  lat: b.lat,
+  lon: b.lon,
+  address: b.address,
+  phone: b.phone,
+  operatingHours: b.operatingHours
+}));
+
+const COURIER_OUTLETS: Record<string, Outlet[]> = {
+  sicepat: branchesList.filter(b => b.partner.toLowerCase().includes('sicepat')),
+  jne: branchesList.filter(b => b.partner.toLowerCase().includes('jne')),
+  'j&t': branchesList.filter(b => b.partner.toLowerCase().includes('j&t')),
+  default: [
+    { id: 're-love-kb', name: 'RE-LOVE Hub Kebayoran', partner: 'RE-LOVE', lat: -6.2448, lon: 106.7973, address: 'Jl. Kebayoran Baru, Jakarta Selatan', operatingHours: '09:00 - 17:00' },
+    { id: 're-love-cbd', name: 'RE-LOVE Hub CBD', partner: 'RE-LOVE', lat: -6.2230, lon: 106.8240, address: 'Jl. Kuningan, Jakarta Selatan', operatingHours: '09:00 - 17:00' },
+  ],
+};
+
+// Helper to compute map positions from latitude and longitude
+const getMapCoords = (lat: number, lon: number) => {
+  // Approximate bounds for South Jakarta / Kebayoran Baru area covered by the mock map
+  const minLat = -6.30;
+  const maxLat = -6.21;
+  const minLon = 106.77;
+  const maxLon = 106.83;
+  
+  // Calculate percentage positions
+  // Lat: higher negative value (-6.30) is South (bottom), lower negative value (-6.21) is North (top)
+  // Lon: lower value (106.77) is West (left), higher value (106.83) is East (right)
+  const top = ((maxLat - lat) / (maxLat - minLat)) * 80 + 10; // offset slightly to keep inside bounds
+  const left = ((lon - minLon) / (maxLon - minLon)) * 80 + 10;
+  
+  return { top: `${top}%`, left: `${left}%` };
+};
 
 export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
   orders,
@@ -77,178 +118,20 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
   const filtered = getFilteredOrders();
   const activeOrder = filtered.find(o => o.id === selectedOrderId) || filtered[0];
 
-  const activeOutlet = activeOrder ? orderOutlets[activeOrder.id] : null;
-  const activeResi = activeOrder ? orderResis[activeOrder.id] : '';
+  const activeOutlet = activeOrder ? orderOutlets[activeOrder.id] : undefined;
+  const activeResi = activeOrder ? orderResis[activeOrder.id] : undefined;
   const activePdfDownloaded = activeOrder ? !!orderPdfDownloaded[activeOrder.id] : false;
   const activeArrangeStep = activeOutlet ? 'download-pdf' : 'select-outlet';
 
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const [isLeafletLoaded, setIsLeafletLoaded] = useState<boolean>(false);
-  const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
-  const [isLocating, setIsLocating] = useState<boolean>(false);
-
-  // Load Leaflet dynamically from CDN
-  useEffect(() => {
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css';
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
-
-    if (!(window as any).L) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.async = true;
-      script.onload = () => {
-        setIsLeafletLoaded(true);
-      };
-      document.body.appendChild(script);
-    } else {
-      setIsLeafletLoaded(true);
-    }
-  }, []);
-
-  // Fetch real-time GPS coordinates of the user when setting up shipments
-  useEffect(() => {
-    if (activeOrder && activeOrder.status === 'Paid' && activeArrangeStep === 'select-outlet') {
-      setIsLocating(true);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-          setIsLocating(false);
-        },
-        (err) => {
-          console.warn('Geolocation failed or permission denied, using default Kebayoran Baru coordinates.', err);
-          // Default: Kebayoran Baru, Jakarta (-6.2446, 106.8006)
-          setUserCoords({ lat: -6.2446, lon: 106.8006 });
-          setIsLocating(false);
-        },
-        { enableHighAccuracy: true, timeout: 5000 }
-      );
-    }
-  }, [activeOrder?.id, activeOrder?.status, activeArrangeStep]);
-
-  // Dynamically compute nearby outlets around the user's coordinates matching the chosen courier partner
-  const outlets = useMemo<Outlet[]>(() => {
-    if (!userCoords || !activeOrder) return [];
-    const courier = activeOrder.courier.split(' ')[0]; // 'SiCepat' or 'J&T'
-    return [
-      {
-        id: `out-${activeOrder.id}-1`,
-        name: `Gerai ${courier} - Cabang Terdekat`,
-        distance: '240 m',
-        lat: userCoords.lat + 0.0018,
-        lon: userCoords.lon - 0.0022,
-      },
-      {
-        id: `out-${activeOrder.id}-2`,
-        name: `Hub ${courier} - Drop Point Utama`,
-        distance: '580 m',
-        lat: userCoords.lat - 0.0025,
-        lon: userCoords.lon + 0.0031,
-      },
-      {
-        id: `out-${activeOrder.id}-3`,
-        name: `Kolektor ${courier} - Point Express`,
-        distance: '1.1 km',
-        lat: userCoords.lat + 0.0041,
-        lon: userCoords.lon + 0.0015,
-      },
-    ];
-  }, [userCoords, activeOrder?.id, activeOrder?.courier]);
-
-  // Render or update Leaflet map when Leaflet, coordinates, and outlets are loaded
-  useEffect(() => {
-    if (!isLeafletLoaded || !userCoords || !mapContainerRef.current || activeArrangeStep !== 'select-outlet') return;
-
-    // Clean up existing map instance
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-    }
-
-    const L = (window as any).L;
-    if (!L) return;
-
-    // Initialize Leaflet map targeting the container ref
-    const map = L.map(mapContainerRef.current).setView([userCoords.lat, userCoords.lon], 15);
-    mapInstanceRef.current = map;
-
-    // Add Tile Layer (OpenStreetMap)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Custom Icon for User's real GPS position (Pulsing Blue Ring)
-    const userIcon = L.divIcon({
-      className: 'custom-user-icon',
-      html: `
-        <div style="position: relative; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;">
-          <div style="position: absolute; width: 12px; height: 12px; background-color: #2563eb; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 6px rgba(37,99,235,0.6); z-index: 10;"></div>
-          <div style="position: absolute; width: 12px; height: 12px; background-color: #2563eb; border-radius: 50%; transform: scale(2); opacity: 0; animation: pulse-ring-marker 1.8s infinite; z-index: 9;"></div>
-        </div>
-      `,
-      iconSize: [16, 16],
-      iconAnchor: [8, 8]
-    });
-
-    L.marker([userCoords.lat, userCoords.lon], { icon: userIcon })
-      .addTo(map)
-      .bindPopup('<strong>Lokasi Toko Anda</strong>')
-      .openPopup();
-
-    // Map each outlet to a Leaflet marker
-    outlets.forEach((outlet) => {
-      const outletIcon = L.divIcon({
-        className: 'custom-outlet-pin',
-        html: `
-          <div style="background-color: #002d1c; color: white; padding: 6px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-        `,
-        iconSize: [28, 28],
-        iconAnchor: [14, 28]
-      });
-
-      const marker = L.marker([outlet.lat, outlet.lon], { icon: outletIcon }).addTo(map);
-      marker.bindPopup(`
-        <div style="font-family: inherit; font-size: 11px; color: #1c1b1b; text-align: left;">
-          <strong style="color: #002d1c; display: block; margin-bottom: 2px;">${outlet.name}</strong>
-          <span>Jarak: ${outlet.distance}</span>
-          <button 
-            style="display: block; margin-top: 6px; padding: 3px 8px; background-color: #002d1c; color: white; border: none; border-radius: 4px; font-size: 9px; font-weight: bold; cursor: pointer; text-transform: uppercase;"
-            id="btn-select-${outlet.id}"
-          >
-            Pilih Gerai ini
-          </button>
-        </div>
-      `);
-
-      marker.on('popupopen', () => {
-        const btn = document.getElementById(`btn-select-${outlet.id}`);
-        if (btn) {
-          btn.addEventListener('click', () => {
-            handleSelectOutlet(outlet);
-          });
-        }
-      });
-    });
-
-    // Append custom animation styles to head
-    if (!document.getElementById('leaflet-animation-style')) {
-      const style = document.createElement('style');
-      style.id = 'leaflet-animation-style';
-      style.innerHTML = `
-        @keyframes pulse-ring-marker {
-          0% { transform: scale(1); opacity: 0.6; }
-          100% { transform: scale(2.8); opacity: 0; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }, [isLeafletLoaded, userCoords, outlets, activeArrangeStep]);
+  const courierKey = activeOrder?.courier.toLowerCase() ?? '';
+  const selectedCourier = courierKey.includes('sicepat')
+    ? 'sicepat'
+    : courierKey.includes('jne')
+    ? 'jne'
+    : courierKey.includes('j&t')
+    ? 'j&t'
+    : 'default';
+  const availableOutlets = activeOrder ? COURIER_OUTLETS[selectedCourier] : COURIER_OUTLETS.default;
 
   const handleConfirmOrder = (orderId: string) => {
     onUpdateOrderStatus(orderId, 'Paid');
@@ -256,10 +139,10 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
   };
 
   const handleRejectClick = (orderId: string) => {
-    const reason = window.prompt('Harap masukkan alasan penolakan pesanan (dana escrow pembeli akan otomatis direfund):', 'Stok barang rusak/hilang');
+    const reason = window.prompt('Harap masukkan alasan penolakan pesanan (dana pembeli akan otomatis direfund):', 'Stok barang rusak/hilang');
     if (reason !== null) {
       onRejectOrder(orderId);
-      alert('Pesanan ditolak. Dana QRIS Escrow pembeli telah direfund.');
+      alert('Pesanan ditolak. Dana telah direfund.');
     }
   };
 
@@ -270,6 +153,7 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
     
     setOrderOutlets(prev => ({ ...prev, [orderId]: outlet }));
     setOrderResis(prev => ({ ...prev, [orderId]: randNo }));
+    setOrderPdfDownloaded(prev => ({ ...prev, [orderId]: false }));
     
     alert(`Gerai ${outlet.name} terpilih! Nomor antrian pengiriman/resi (${randNo}) telah diterbitkan oleh gerai ini.`);
   };
@@ -338,10 +222,7 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
               key={tab}
               onClick={() => {
                 setActiveTab(tab);
-                setSelectedOrderId(''); // Reset selected order
-                setSelectedOutlet(null);
-                setPdfDownloaded(false);
-                setArrangeStep('select-outlet');
+                setSelectedOrderId('');
               }}
               className={`px-4 py-3 text-xs font-black uppercase tracking-wider relative transition-all border-b-2 cursor-pointer ${
                 isActive 
@@ -384,9 +265,6 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                   key={order.id}
                   onClick={() => {
                     setSelectedOrderId(order.id);
-                    setSelectedOutlet(null);
-                    setPdfDownloaded(false);
-                    setArrangeStep('select-outlet');
                   }}
                   className={`p-4 rounded-[20px] border transition-all cursor-pointer text-left flex flex-col gap-3 relative overflow-hidden ${
                     isSelected 
@@ -458,7 +336,7 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                     Pemesan: <strong>Budi Santoso</strong> • Kebayoran Baru, Jakarta Selatan
                   </p>
                   <p className="text-[9px] text-[#414944]/80 mt-0.5">
-                    Metode Pembayaran: QRIS Escrow (Dana Ditahan Aman)
+                    Metode Pembayaran: QRIS
                   </p>
                 </div>
                 <div className="text-right">
@@ -477,7 +355,7 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                     <div>
                       <p className="font-bold">Konfirmasi Pesanan</p>
                       <p className="opacity-90 mt-0.5">
-                        Harap periksa kondisi pakaian terlebih dahulu sebelum menerima pesanan ini. Menolak pesanan akan merefund dana escrow secara instan ke pembeli.
+                        Harap periksa kondisi pakaian terlebih dahulu sebelum menerima pesanan ini. Menolak pesanan akan merefund dana secara instan ke pembeli.
                       </p>
                     </div>
                   </div>
@@ -520,8 +398,8 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                   {activeArrangeStep === 'select-outlet' && (
                     <div className="space-y-4">
                       <div className="text-[11px] text-[#414944] leading-relaxed">
-                        <strong className="text-[#002d1c]">Pilih Gerai Pengiriman Terdekat dari lokasi Anda:</strong>
-                        <p className="mt-0.5 text-neutral-500">Klik salah satu pin berlogo lokasi pada peta interaktif di bawah untuk memilih gerai drop-off paket.</p>
+                        <strong className="text-[#002d1c]">Pilih Gerai Pengiriman Terdekat untuk paket Anda:</strong>
+                        <p className="mt-0.5 text-neutral-500">Pilih salah satu gerai yang tersedia di bawah untuk melanjutkan proses unduh label dan drop-off paket.</p>
                       </div>
 
                       {/* Map Container SVG Simulation */}
@@ -538,21 +416,28 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                         </svg>
 
                         {/* Outer Pins mapping */}
-                        {outlets.map((outlet) => {
+                        {availableOutlets.map((outlet) => {
+                          const coords = getMapCoords(outlet.lat, outlet.lon);
                           return (
                             <button
                               key={outlet.id}
                               type="button"
                               onClick={() => handleSelectOutlet(outlet)}
-                              className="absolute group flex flex-col items-center cursor-pointer transition-all hover:scale-115 active:scale-95"
-                              style={{ left: `${outlet.coords.x}%`, top: `${outlet.coords.y}%` }}
+                              className="absolute p-2.5 rounded-full bg-white border border-[#f0edec] hover:border-[#002d1c] hover:scale-110 shadow-md transition-all cursor-pointer group z-10"
+                              style={{ top: coords.top, left: coords.left }}
                             >
-                              <div className="bg-[#002d1c] text-white p-1.5 rounded-full shadow-md flex items-center justify-center hover:bg-emerald-800 transition-colors animate-bounce">
-                                <MapPin size={14} className="stroke-[2.5]" />
+                              <MapPin size={16} className="text-[#002d1c] fill-[#002d1c]/15 group-hover:text-emerald-700" />
+                              
+                              {/* Custom Premium Tooltip */}
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white border border-[#f0edec] p-2.5 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 text-left space-y-1">
+                                <p className="font-bold text-[#1c1b1b] text-[10px] leading-tight">{outlet.name}</p>
+                                <p className="text-[8px] text-neutral-500 font-semibold font-geist">Mitra {outlet.partner}</p>
+                                {outlet.operatingHours && (
+                                  <p className="text-[8px] text-[#002d1c] font-medium bg-[#edf5f1] px-1.5 py-0.5 rounded-sm inline-block">
+                                    {outlet.operatingHours}
+                                  </p>
+                                )}
                               </div>
-                              <span className="scale-0 group-hover:scale-100 transition-transform absolute -top-9 bg-neutral-900 text-white text-[8px] font-bold px-2 py-0.5 rounded shadow whitespace-nowrap z-20 pointer-events-none">
-                                {outlet.name} ({outlet.distance})
-                              </span>
                             </button>
                           );
                         })}
@@ -564,7 +449,7 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
 
                       {/* Outlet list items */}
                       <div className="flex flex-col gap-2">
-                        {outlets.map((outlet) => (
+                        {availableOutlets.map((outlet) => (
                           <div
                             key={outlet.id}
                             onClick={() => handleSelectOutlet(outlet)}
@@ -574,7 +459,9 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
                               <MapPin size={14} className="text-[#002d1c]" />
                               <div>
                                 <p className="font-bold text-[#1c1b1b]">{outlet.name}</p>
-                                <p className="text-[9px] text-[#414944]">Jarak: {outlet.distance} dari lokasi toko</p>
+                                <p className="text-[9px] text-[#414944]">Mitra {outlet.partner}</p>
+                                {outlet.address && <p className="text-[9px] text-[#414944]/80 mt-0.5">{outlet.address}</p>}
+                                {outlet.operatingHours && <p className="text-[9px] text-[#414944]/70 mt-0.5">Jam: {outlet.operatingHours}</p>}
                               </div>
                             </div>
                             <span className="text-[10px] text-[#002d1c] font-bold flex items-center gap-0.5">
@@ -696,16 +583,16 @@ export const SellerOrdersView: React.FC<SellerOrdersViewProps> = ({
               {(activeOrder.status === 'Received' || activeOrder.status === 'Reviewed') && (
                 <div className="space-y-4 text-left">
                   <div className="bg-emerald-50/30 border border-emerald-100 rounded-xl p-4 text-[11px] leading-relaxed text-[#414944]">
-                    <span className="font-bold text-emerald-800 block mb-1">BUKTI PENCAIRAN DANA ESCROW:</span>
+                    <span className="font-bold text-emerald-800 block mb-1">BUKTI PENCAIRAN DANA:</span>
                     Penerima: <strong>{sellerName} (Saldo Keuangan Toko)</strong><br />
                     Nominal Transfer: <strong>Rp {activeOrder.totalAmount.toLocaleString('id-ID')}</strong> (Tanpa Biaya Potongan)<br />
-                    Status: <strong className="text-emerald-700 bg-emerald-100/50 px-2 py-0.5 rounded text-[10px] ml-1">TELAH DICAIRKAN (RELEASED)</strong><br />
+                    Status: <strong className="text-emerald-700 bg-emerald-100/50 px-2 py-0.5 rounded text-[10px] ml-1">TELAH DICAIRKAN</strong><br />
                     Sistem: Auto-release cron RE-LOVE terverifikasi.
                   </div>
 
                   <div className="text-[10px] text-emerald-700 font-bold flex gap-1.5 items-center">
                     <Check size={14} className="stroke-[3]" />
-                    <span>Dana penjualan preloved sirkular Anda telah sukses masuk saldo Keuangan Toko.</span>
+                    <span>Dana penjualan preloved Anda telah sukses masuk saldo Keuangan Toko.</span>
                   </div>
                 </div>
               )}

@@ -185,7 +185,7 @@ export const WithdrawFundsView: React.FC<WithdrawFundsViewProps> = ({
 
         <div className="w-full bg-[#fcf9f8] p-4 border border-[#f0edec] rounded-2xl flex gap-3 text-xs leading-relaxed text-[#414944] mb-8">
           <ShieldCheck size={18} className="text-[#002d1c] flex-shrink-0 mt-0.5" />
-          <p>Verifikasi sirkular RE-LOVE sedang memproses pengiriman dana. Estimasi waktu masuk 1x24 jam kerja.</p>
+          <p>Verifikasi RE-LOVE sedang memproses pengiriman dana. Estimasi waktu masuk 1x24 jam kerja.</p>
         </div>
 
         <button
@@ -223,10 +223,7 @@ export const WithdrawFundsView: React.FC<WithdrawFundsViewProps> = ({
           <span className="text-[10px] uppercase font-bold text-[#414944] tracking-wider block mb-1">Jumlah Yang Akan Ditarik</span>
           <h2 className="text-2xl font-display font-black text-[#002d1c]">Rp {balance.toLocaleString('id-ID')}</h2>
         </div>
-        <div className="bg-[#002d1c] text-[#c0edd3] px-3.5 py-1.5 rounded-xl font-bold font-mono text-[10px] uppercase tracking-wide">
-          Dana Bersih
         </div>
-      </div>
 
       {/* Sub-form to Add Account */}
       {isAddingNew ? (

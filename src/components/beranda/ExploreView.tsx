@@ -131,7 +131,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
             )}
           </h1>
           <p className="font-body text-body-lg text-[#414944] max-w-lg leading-relaxed">
-            Temukan pakaian preloved berkualitas yang ramah di kantong. Mulai langkah sirkularmu hari ini!
+            Temukan pakaian preloved berkualitas yang ramah di kantong. Mulai langkah barumu hari ini!
           </p>
           <div className="flex flex-wrap gap-4 mt-8">
             <button
@@ -360,7 +360,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
 
         <div className="flex-1 flex flex-col items-start gap-5 text-left font-geist relative z-10 max-w-xl">
           <span className="text-[9px] font-black text-[#002d1c] uppercase tracking-widest bg-[#d4e5c7] px-4 py-1.5 rounded-full inline-block">
-            Sirkular Impact Calculator
+            Eco Impact Calculator
           </span>
           <h2 className="text-3xl md:text-4xl font-display font-black text-[#002d1c] m-0 tracking-tight leading-tight">
             Hitung Kontribusi <br/>
@@ -423,7 +423,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
           </div>
 
           <div className="text-[9px] text-white/50 italic leading-snug text-left mt-2 border-t border-white/10 pt-4 relative z-10">
-            *Rasio dihitung berdasarkan standardisasi global Life Cycle Assessment (LCA) industri tekstil sirkular.
+            *Rasio dihitung berdasarkan standardisasi global Life Cycle Assessment (LCA) industri tekstil.
           </div>
         </div>
       </section>
@@ -435,7 +435,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
             Review Jujur Para Pembeli Kami
           </h2>
           <p className="text-xs text-[#414944] max-w-md mx-auto">
-            Cerita asli dari mereka yang merangkul gaya hidup sirkular modern, ramah lingkungan, dan ekonomis.
+            Cerita asli dari mereka yang merangkul gaya hidup modern, ramah lingkungan, dan ekonomis.
           </p>
         </div>
 
@@ -574,7 +574,7 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
             </h3>
             <p className="text-[11px] text-[#414944] leading-relaxed mb-6">
               {isLoggedIn 
-                ? "Akun Anda terhubung dengan sukses. Masuk ke katalog produk sirkular dan dapatkan diskon potongan eksklusif hingga 70%!"
+                ? "Akun Anda terhubung dengan sukses. Masuk ke katalog produk preloved dan dapatkan diskon potongan eksklusif hingga 70%!"
                 : "Masuk atau daftarkan akun Anda secara gratis untuk melihat harga penuh dan transaksi belanja aman."}
             </p>
             <button

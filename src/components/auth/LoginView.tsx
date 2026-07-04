@@ -124,7 +124,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
         email: normalizedEmail,
         password: normalizedPassword,
         name: fullName.trim(),
-        shopName: `${fullName.trim().split(' ')[0] || 'Toko'} Sirkular`,
+        shopName: `${fullName.trim().split(' ')[0] || 'Toko'} Preloved`,
         phone: '',
         avatar: DEMO_AVATAR,
       };
@@ -180,7 +180,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
             {isLoginTab ? 'Berhasil Masuk!' : 'Pendaftaran Berhasil!'}
           </h2>
           <p className="text-xs text-[#414944] max-w-xs leading-relaxed">
-            Selamat datang kembali! Menyiapkan katalog terkurasi terbaik untuk pengalaman belanja sirkular Anda...
+            Selamat datang kembali! Menyiapkan katalog terkurasi terbaik untuk pengalaman belanja preloved Anda...
           </p>
         </div>
       ) : (
@@ -196,7 +196,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
           <p className="text-xs text-[#414944] leading-relaxed mb-8">
             {isLoginTab 
               ? 'Masuk untuk mengakses rincian transaksi aman, wishlist terkurasi, dan ribuan item preloved.' 
-              : 'Gabung dengan komunitas fashion sirkular bersama RE-LOVE dan selamatkan bumi seraya mengekspresikan gayamu.'}
+              : 'Gabung dengan komunitas fashion preloved bersama RE-LOVE dan selamatkan bumi seraya mengekspresikan gayamu.'}
           </p>
 
           {/* Error Message */}
@@ -300,7 +300,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
                   className="mt-0.5 rounded border-[#c1c8c2] text-[#002d1c] focus:ring-[#002d1c] h-4 w-4"
                 />
                 <span className="text-[11px] text-[#414944] leading-relaxed">
-                  Saya menyetujui <span className="font-bold text-[#002d1c] underline">Ketentuan Layanan</span> dan <span className="font-bold text-[#002d1c] underline">Kebijakan Privasi</span> Transaksi Sirkular Aman RE-LOVE.
+                  Saya menyetujui <span className="font-bold text-[#002d1c] underline">Ketentuan Layanan</span> dan <span className="font-bold text-[#002d1c] underline">Kebijakan Privasi</span> Transaksi Aman RE-LOVE.
                 </span>
               </label>
             )}
@@ -315,7 +315,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <span>{isLoginTab ? 'Masuk ke Akun' : 'Daftar Akun Sirkular'}</span>
+                  <span>{isLoginTab ? 'Masuk ke Akun' : 'Daftar Akun'}</span>
                   <ArrowRight size={14} />
                 </>
               )}

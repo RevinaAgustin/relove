@@ -158,7 +158,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
           &larr; Kembali
         </button>
         <h2 className="font-display text-[#002d1c] text-3xl font-extrabold tracking-tight">Checkout</h2>
-        <p className="font-body text-sm text-[#414944] mt-1.5">Selesaikan pesanan Anda untuk melestarikan industri fashion sirkular.</p>
+        <p className="font-body text-sm text-[#414944] mt-1.5">Selesaikan pesanan Anda untuk melestarikan industri fashion preloved.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-bento-gap relative">

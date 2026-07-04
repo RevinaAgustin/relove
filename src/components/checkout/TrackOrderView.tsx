@@ -34,7 +34,7 @@ export const TrackOrderView: React.FC<TrackOrderViewProps> = ({
   const [chatMessages, setChatMessages] = useState<Array<{ sender: 'user' | 'seller', text: string, time: string }>>([
     {
       sender: 'seller',
-      text: `Halo! Terima kasih telah membeli "${order.productName}" di toko kami. Paket Anda sedang diproses oleh kurir dengan nomor resi ${order.resi}. Apakah ada hal lain terkait produk sirkular preloved ini yang bisa saya bantu? 🌿`,
+      text: `Halo! Terima kasih telah membeli "${order.productName}" di toko kami. Paket Anda sedang diproses oleh kurir dengan nomor resi ${order.resi}. Apakah ada hal lain terkait produk preloved ini yang bisa saya bantu? 🌿`,
       time: '12:00'
     }
   ]);
@@ -75,7 +75,7 @@ export const TrackOrderView: React.FC<TrackOrderViewProps> = ({
       } else if (lowercaseMsg.includes('kondisi') || lowercaseMsg.includes('minus') || lowercaseMsg.includes('cacat') || lowercaseMsg.includes('ori')) {
         replyText = `Kondisi dijamin mantap kak, sesuai dengan foto & deskripsi. Sudah tim kurasi RE-LOVE verifikasi secara fisik untuk keaslian serta kualitas kebersihannya. Kakak tinggal pakai saat sampai!`;
       } else if (lowercaseMsg.includes('makasih') || lowercaseMsg.includes('terima kasih') || lowercaseMsg.includes('oke') || lowercaseMsg.includes('siap')) {
-        replyText = `Sama-sama kak! Senang melayani Anda. Terima kasih juga telah memilih gaya hidup sirkular untuk masa depan bumi yang lebih hijau. Sehat selalu! 💚`;
+        replyText = `Sama-sama kak! Senang melayani Anda. Terima kasih juga telah memilih gaya hidup ramah lingkungan untuk masa depan bumi yang lebih hijau. Sehat selalu! 💚`;
       } else {
         replyText = `Pertanyaan bagus kak. Pesanan Anda kami packing tebal dengan bubble wrap & polymailer ramah lingkungan. Kami bantu pantau perjalanannya juga ya kak, semoga cepat dan aman sampai ke tangan kakak!`;
       }
@@ -320,7 +320,7 @@ export const TrackOrderView: React.FC<TrackOrderViewProps> = ({
               <div>
                 <h4 className="font-black text-xs text-[#c0edd3]">Dana Aman Terproteksi</h4>
                 <p className="text-[10px] text-[#ebe7e7]/85 leading-relaxed mt-1">
-                  Sistem proteksi RE-LOVE mengamankan total tagihan Rp {order.totalAmount.toLocaleString('id-ID')} dengan aman. Dana tidak akan dilepaskan sebelum Anda setuju kondisi sirkular sesuai.
+                  Sistem proteksi RE-LOVE mengamankan total tagihan Rp {order.totalAmount.toLocaleString('id-ID')} dengan aman. Dana tidak akan dilepaskan sebelum Anda setuju kondisi barang sesuai.
                 </p>
               </div>
             </div>

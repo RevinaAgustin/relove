@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Star, Shield, ArrowLeft, Heart, ShoppingCart, HelpCircle, UserCheck } from 'lucide-react';
+import { Star, Shield, ArrowLeft, Heart, ShoppingCart, HelpCircle, UserCheck, Edit2, Trash2, Archive } from 'lucide-react';
 import { Product } from '../../types';
 
 interface ProductDetailViewProps {
@@ -16,6 +16,9 @@ interface ProductDetailViewProps {
   onGoBack: () => void;
   onGoToShop: (sellerName: string) => void;
   userProfile?: { name: string; shopName: string; email: string; phone: string; avatar: string };
+  onEditProduct?: (product: Product) => void;
+  onDeleteProduct?: (productId: string) => void;
+  onUpdateProduct?: (product: Product) => void;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
@@ -27,17 +30,20 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onGoBack,
   onGoToShop,
   userProfile,
+  onEditProduct,
+  onDeleteProduct,
+  onUpdateProduct,
 }) => {
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
 
   // 5-Point Verified Condition Check Galleried Photos
-  const productPhotos = [
+  const productPhotos: Array<{ label: string; url: string; isZoomed?: boolean; isMinus?: boolean; minusText?: string }> = [
     { label: 'Depan', url: product.imagePrimary },
     { label: 'Belakang', url: product.imageHover },
-    { label: 'Label/Tag', url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBY7RgKRR--WV_tAd9SPVkiCsi8eLuii-7l7lxX2C8dyEhHpCKjWb5627gWUMBiMbBJsi16MlVBl0KzVr6yM4qOCLIBdSieAwyB11X81dc77fOvUkgUrN-iMr73YacBV7bzavKAV7cxhcmGReVGLaJobEicNTqhnvKiLvs9D9oQu0opEDIxkdX1US33G4Yw887vPTc-tJ-ddZOia8OGA-q0D-p2Bh0Z1sQvHMaVQO5Txo7CyQyUPpuErLVXa9r9mdkZlM330fl152Vx' },
-    { label: 'Minus', url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCeaaSSlwZgkNTPgGz4AyxDMt-MWKJdq4PVgkFOUnAOrcFITJyHqtGxxwzq6r-unalJF4MLtNFyUZIaDPx3--QudBhABuXFhOK0Ru2kqtox9GNgL5B3xUhNbyEQ3p9xqhUkIuocopCbiCOF-AOXCE642SL3Av4Vj1Xwm3aZkDFtC_xircD3xswsprnXF0l4NimrpKwjhqDWWLu-IZiu4eE1jJbH7Q0LnZpCQkMBDvbgT0GrtpPjxMIINzxa3eaevmjbWkwOQajCWnlu'},
-    { label: 'Detail Bahan', url: product.imagePrimary, isZoomed: true }
+    { label: 'Label/Tag', url: product.imageTag || 'https://lh3.googleusercontent.com/aida-public/AB6AXuBY7RgKRR--WV_tAd9SPVkiCsi8eLuii-7l7lxX2C8dyEhHpCKjWb5627gWUMBiMbBJsi16MlVBl0KzVr6yM4qOCLIBdSieAwyB11X81dc77fOvUkgUrN-iMr73YacBV7bzavKAV7cxhcmGReVGLaJobEicNTqhnvKiLvs9D9oQu0opEDIxkdX1US33G4Yw887vPTc-tJ-ddZOia8OGA-q0D-p2Bh0Z1sQvHMaVQO5Txo7CyQyUPpuErLVXa9r9mdkZlM330fl152Vx' },
+    { label: 'Minus', url: product.imageMinus || 'https://lh3.googleusercontent.com/aida-public/AB6AXuCeaaSSlwZgkNTPgGz4AyxDMt-MWKJdq4PVgkFOUnAOrcFITJyHqtGxxwzq6r-unalJF4MLtNFyUZIaDPx3--QudBhABuXFhOK0Ru2kqtox9GNgL5B3xUhNbyEQ3p9xqhUkIuocopCbiCOF-AOXCE642SL3Av4Vj1Xwm3aZkDFtC_xircD3xswsprnXF0l4NimrpKwjhqDWWLu-IZiu4eE1jJbH7Q0LnZpCQkMBDvbgT0GrtpPjxMIINzxa3eaevmjbWkwOQajCWnlu', isMinus: true, minusText: 'Jahitan sedikit longgar' },
+    { label: 'Detail Bahan', url: product.imageDetail || product.imagePrimary, isZoomed: true }
   ];
 
   return (
@@ -176,29 +182,72 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
 
               {/* Quantity Selector */}
-              <div className="flex items-center justify-between bg-[#fcf9f8] border border-[#c1c8c2]/30 p-4 rounded-[16px] mt-6 font-geist shadow-inner">
-                <span className="text-xs font-bold text-[#414944] uppercase tracking-wider">Jumlah Pembelian</span>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-8 h-8 rounded-full border border-[#c1c8c2]/50 flex items-center justify-center text-[#414944] hover:border-[#002d1c] hover:bg-[#002d1c]/5 hover:text-[#002d1c] transition-all font-bold cursor-pointer active:scale-90"
-                  >
-                    -
-                  </button>
-                  <span className="text-sm font-black text-[#002d1c] w-6 text-center">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity((q) => q + 1)}
-                    className="w-8 h-8 rounded-full border border-[#c1c8c2]/50 flex items-center justify-center text-[#414944] hover:border-[#002d1c] hover:bg-[#002d1c]/5 hover:text-[#002d1c] transition-all font-bold cursor-pointer active:scale-90"
-                  >
-                    +
-                  </button>
+              {product.sellerName !== userProfile?.shopName && (
+                <div className="flex items-center justify-between bg-[#fcf9f8] border border-[#c1c8c2]/30 p-4 rounded-[16px] mt-6 font-geist shadow-inner">
+                  <span className="text-xs font-bold text-[#414944] uppercase tracking-wider">Jumlah Pembelian</span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="w-8 h-8 rounded-full border border-[#c1c8c2]/50 flex items-center justify-center text-[#414944] hover:border-[#002d1c] hover:bg-[#002d1c]/5 hover:text-[#002d1c] transition-all font-bold cursor-pointer active:scale-90"
+                    >
+                      -
+                    </button>
+                    <span className="text-sm font-black text-[#002d1c] w-6 text-center">{quantity}</span>
+                    <button
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="w-8 h-8 rounded-full border border-[#c1c8c2]/50 flex items-center justify-center text-[#414944] hover:border-[#002d1c] hover:bg-[#002d1c]/5 hover:text-[#002d1c] transition-all font-bold cursor-pointer active:scale-90"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Action Buttons */}
               {product.sellerName === userProfile?.shopName ? (
-                <div className="bg-[#fcf9f8] border border-[#f0edec] rounded-2xl p-4 text-center text-xs text-[#414944] font-bold mt-4">
-                  <span>Ini adalah produk terdaftar dari toko Anda sendiri.</span>
+                <div className="flex flex-col gap-3 mt-4">
+                  <button
+                    onClick={() => onEditProduct && onEditProduct(product)}
+                    className="w-full bg-[#002d1c] text-white hover:opacity-95 text-sm py-4 rounded-[16px] font-geist font-black flex items-center justify-center gap-2 transition-all active:scale-98 shadow-md cursor-pointer"
+                  >
+                    <Edit2 size={16} />
+                    <span>Edit Detail Barang</span>
+                  </button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => {
+                        if (onUpdateProduct) {
+                          onUpdateProduct({
+                            ...product,
+                            isArchived: !product.isArchived
+                          });
+                        }
+                      }}
+                      className={`w-full bg-transparent border text-xs py-4 rounded-[16px] font-geist font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 cursor-pointer ${
+                        product.isArchived 
+                          ? 'border-emerald-500 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' 
+                          : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
+                      }`}
+                    >
+                      <Archive size={14} />
+                      <span>{product.isArchived ? 'Aktifkan' : 'Arsipkan'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (onDeleteProduct) {
+                          if (window.confirm('Apakah Anda yakin ingin menghapus produk ini secara permanen dari listing Anda?')) {
+                            onDeleteProduct(product.id);
+                          }
+                        }
+                      }}
+                      className="w-full bg-transparent border border-red-200 text-red-600 hover:bg-red-50 text-xs py-4 rounded-[16px] font-geist font-bold flex items-center justify-center gap-1.5 transition-all active:scale-98 cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                      <span>Hapus</span>
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 mt-4">

@@ -114,7 +114,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
   const [segment, setSegment] = useState<'Womens' | 'Mens' | 'Kids'>(parsedCat.seg);
   const [subcategory, setSubcategory] = useState<string>(parsedCat.sub);
   const [color, setColor] = useState(parsedDesc.col);
-  const [condition, setCondition] = useState(initialProduct ? initialProduct.condition : 'Baru');
+  const [condition, setCondition] = useState<string>(initialProduct ? initialProduct.condition : 'Baru');
   const [description, setDescription] = useState(parsedDesc.cleanDesc);
   const [price, setPrice] = useState<number>(initialProduct ? initialProduct.price : 350000);
 
@@ -189,7 +189,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
         return {
           title: 'Sisi Depan Pakaian',
           desc: 'Pilih foto pakaian secara utuh dari depan. Bentangkan atau gantung pakaian secara simetris.',
-          overlay: 'Posisikan kerah baju tegak di area kotak hijau sirkular'
+          overlay: 'Posisikan kerah baju tegak di area kotak hijau'
         };
       case 'belakang':
         return {
@@ -287,8 +287,18 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
           destHeight = sourceWidth;
         }
 
-        canvas.width = destWidth;
-        canvas.height = destHeight;
+        // Downscale image to max 600px to prevent localStorage QuotaExceededError
+        const MAX_DIM = 600;
+        let scale = 1;
+        if (destWidth > MAX_DIM || destHeight > MAX_DIM) {
+          scale = MAX_DIM / Math.max(destWidth, destHeight);
+        }
+
+        const finalWidth = Math.round(destWidth * scale);
+        const finalHeight = Math.round(destHeight * scale);
+
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
 
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate((rotateDeg * Math.PI) / 180);
@@ -299,13 +309,13 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
           sourceY,
           sourceWidth,
           sourceHeight,
-          -sourceWidth / 2,
-          -sourceHeight / 2,
-          sourceWidth,
-          sourceHeight
+          -(sourceWidth * scale) / 2,
+          -(sourceHeight * scale) / 2,
+          sourceWidth * scale,
+          sourceHeight * scale
         );
 
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
       };
       img.onerror = () => resolve(imageSrc);
       img.src = imageSrc;
@@ -492,8 +502,8 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
         </h1>
         <p className="text-sm text-[#414944] leading-relaxed mb-8">
           {initialProduct 
-            ? 'Perubahan listing preloved Anda resmi disimpan dan diperbarui di katalog sirkular RE-LOVE.'
-            : 'Listing barang preloved Anda resmi dipublikasikan di katalog sirkular RE-LOVE dan telah diamankan dengan sistem perlindungan pembayaran.'}
+            ? 'Perubahan listing preloved Anda resmi disimpan dan diperbarui di katalog RE-LOVE.'
+            : 'Listing barang preloved Anda resmi dipublikasikan di katalog RE-LOVE dan telah diamankan dengan sistem perlindungan pembayaran.'}
         </p>
 
         <button
@@ -960,7 +970,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
         <section className="bg-white rounded-[24px] p-6 md:p-8 border border-[#f0edec] shadow-sm flex flex-col gap-6 font-geist">
           <div className="border-b border-[#f0edec] pb-4 mb-2">
             <h2 className="font-display font-bold text-xl text-[#002d1c]">Harga & Estimasi Terpilih</h2>
-            <p className="text-xs text-[#414944] mt-0.5">Tentukan nilai tukar sirkular preloved terbaik bagi barang Anda.</p>
+            <p className="text-xs text-[#414944] mt-0.5">Tentukan nilai tukar preloved terbaik bagi barang Anda.</p>
           </div>
 
           <div className="space-y-6">
@@ -1111,7 +1121,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
               onClick={handlePublish}
               className="flex-grow bg-[#002d1c] text-white hover:opacity-95 font-geist font-black text-xs uppercase tracking-wider h-14 rounded-[16px] active:scale-95 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#002d1c]/10"
             >
-              <span> Update Listing</span>
+              <span>{initialProduct ? 'Update' : 'Tambahkan ke Listing'}</span>
             </button>
           )}
         </div>

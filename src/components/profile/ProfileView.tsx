@@ -630,7 +630,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                     </div>
                   </div>
                   <p className="text-[#414944] italic leading-normal">
-                    "Cantik sekali kemejanya. Bersih, wangi, packing rapi sirkular dari dus daur ulang."
+                    "Cantik sekali kemejanya. Bersih, wangi, packing rapi dari dus daur ulang."
                   </p>
                 </div>
               </div>
@@ -669,7 +669,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-xs font-bold text-[#1c1b1b]">Alamat Pengiriman</h4>
-                <p className="text-[10px] text-[#414944] leading-relaxed">Kelola dan atur alamat pengiriman sirkular Anda</p>
+                <p className="text-[10px] text-[#414944] leading-relaxed">Kelola dan atur alamat pengiriman Anda</p>
               </div>
             </div>
             <ChevronRight size={16} className="text-[#c1c8c2] group-hover:translate-x-1 transition-transform flex-shrink-0" />
@@ -895,7 +895,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <button
           onClick={() => {
             if (setIsLoggedIn) setIsLoggedIn(false);
-            alert('Anda telah keluar dari akun sirkular.');
+            alert('Anda telah keluar dari akun.');
             navigate('explore');
           }}
           className="flex items-center gap-2 text-xs font-bold text-[#ba1a1a] hover:opacity-75 transition-opacity cursor-pointer"
