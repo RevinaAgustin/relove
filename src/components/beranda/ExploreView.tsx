@@ -151,49 +151,53 @@ export const ExploreView: React.FC<ExploreViewProps> = ({
           </div>
         </div>
         <div className="md:col-span-12 lg:col-span-5 relative h-[450px] hidden md:block">
-          {/* Card 1: Vintage Jacket */}
-          <div
-            onClick={() => onSelectProduct(products[0])}
-            className="absolute top-2 right-2 w-52 lg:w-64 xl:w-72 bg-white p-3 lg:p-4 rounded-[24px] shadow-lg rotate-3 z-10 cursor-pointer transition-all duration-300 hover:scale-105 hover:z-30 hover:shadow-xl border border-black/5"
-          >
-            <div className="w-full h-48 lg:h-56 xl:h-64 rounded-xl mb-3 bg-[#f6f3f2] overflow-hidden relative">
-              <img
-                alt={products[0].name}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                referrerPolicy="no-referrer"
-                src={products[0].imagePrimary}
-              />
-              <span className="absolute top-2 left-2 bg-[#002d1c] text-white text-[9px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest font-geist shadow-sm">
-                Vintage Peak
-              </span>
-            </div>
-            <div className="flex justify-between items-center px-1 font-geist">
-              <span className="text-xs lg:text-sm text-[#1c1b1b] font-semibold truncate max-w-[110px] lg:max-w-[170px]">{products[0].name}</span>
-              <span className="text-xs lg:text-sm text-[#002d1c] font-black">Rp {products[0].price.toLocaleString('id-ID')}</span>
-            </div>
-          </div>
+          {products.length > 0 && (
+            <>
+              {/* Card 1: Vintage Jacket */}
+              <div
+                onClick={() => onSelectProduct(products[0])}
+                className="absolute top-2 right-2 w-52 lg:w-64 xl:w-72 bg-white p-3 lg:p-4 rounded-[24px] shadow-lg rotate-3 z-10 cursor-pointer transition-all duration-300 hover:scale-105 hover:z-30 hover:shadow-xl border border-black/5"
+              >
+                <div className="w-full h-48 lg:h-56 xl:h-64 rounded-xl mb-3 bg-[#f6f3f2] overflow-hidden relative">
+                  <img
+                    alt={products[0].name}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    referrerPolicy="no-referrer"
+                    src={products[0].imagePrimary}
+                  />
+                  <span className="absolute top-2 left-2 bg-[#002d1c] text-white text-[9px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest font-geist shadow-sm">
+                    Vintage Peak
+                  </span>
+                </div>
+                <div className="flex justify-between items-center px-1 font-geist">
+                  <span className="text-xs lg:text-sm text-[#1c1b1b] font-semibold truncate max-w-[110px] lg:max-w-[170px]">{products[0].name}</span>
+                  <span className="text-xs lg:text-sm text-[#002d1c] font-black">Rp {products[0].price.toLocaleString('id-ID')}</span>
+                </div>
+              </div>
 
-          {/* Card 2: Leather Boots (Shoe) */}
-          <div
-            onClick={() => onSelectProduct(products[1] || products[0])}
-            className="absolute bottom-2 left-2 w-48 lg:w-52 xl:w-60 bg-white p-3 lg:p-4 rounded-[24px] shadow-lg -rotate-6 z-20 cursor-pointer transition-all duration-300 hover:scale-105 hover:z-30 hover:shadow-xl border border-black/5"
-          >
-            <div className="w-full h-40 lg:h-44 xl:h-52 rounded-xl mb-3 bg-[#f6f3f2] overflow-hidden relative">
-              <img
-                alt={products[1]?.name || 'Product'}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                referrerPolicy="no-referrer"
-                src={products[1]?.imagePrimary || products[0].imagePrimary}
-              />
-              <span className="absolute top-2 left-2 bg-[#94442a] text-white text-[9px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest font-geist shadow-sm">
-                Curated
-              </span>
-            </div>
-            <div className="flex justify-between items-center px-1 font-geist">
-              <span className="text-xs lg:text-sm text-[#1c1b1b] font-semibold truncate max-w-[90px] lg:max-w-[130px]">{products[1]?.name || 'Minimalist Item'}</span>
-              <span className="text-xs lg:text-sm text-[#002d1c] font-bold">Rp {(products[1]?.price || 350000).toLocaleString('id-ID')}</span>
-            </div>
-          </div>
+              {/* Card 2: Leather Boots (Shoe) */}
+              <div
+                onClick={() => onSelectProduct(products[1] || products[0])}
+                className="absolute bottom-2 left-2 w-48 lg:w-52 xl:w-60 bg-white p-3 lg:p-4 rounded-[24px] shadow-lg -rotate-6 z-20 cursor-pointer transition-all duration-300 hover:scale-105 hover:z-30 hover:shadow-xl border border-black/5"
+              >
+                <div className="w-full h-40 lg:h-44 xl:h-52 rounded-xl mb-3 bg-[#f6f3f2] overflow-hidden relative">
+                  <img
+                    alt={products[1]?.name || 'Product'}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    referrerPolicy="no-referrer"
+                    src={products[1]?.imagePrimary || products[0].imagePrimary}
+                  />
+                  <span className="absolute top-2 left-2 bg-[#94442a] text-white text-[9px] px-2 py-0.5 rounded-full uppercase font-bold tracking-widest font-geist shadow-sm">
+                    Curated
+                  </span>
+                </div>
+                <div className="flex justify-between items-center px-1 font-geist">
+                  <span className="text-xs lg:text-sm text-[#1c1b1b] font-semibold truncate max-w-[90px] lg:max-w-[130px]">{products[1]?.name || 'Minimalist Item'}</span>
+                  <span className="text-xs lg:text-sm text-[#002d1c] font-bold">Rp {(products[1]?.price || 350000).toLocaleString('id-ID')}</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 

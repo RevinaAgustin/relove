@@ -31,6 +31,20 @@ import { INITIAL_PRODUCTS } from './data';
 import { Product, Order, Screen, CartItem } from './types';
 
 export default function App() {
+  // One-time reset to clear previous dummy data for testing
+  if (typeof window !== 'undefined' && !localStorage.getItem('re_love_db_cleared_v3')) {
+    localStorage.removeItem('relove_products');
+    localStorage.removeItem('re_love_users');
+    localStorage.removeItem('re_love_active_user');
+    localStorage.removeItem('re_love_user_profile');
+    localStorage.removeItem('re_love_orders');
+    localStorage.removeItem('re_love_chats');
+    localStorage.removeItem('re_love_wishlist');
+    localStorage.removeItem('re_love_cart');
+    localStorage.removeItem('re_love_addresses');
+    localStorage.setItem('re_love_db_cleared_v3', 'true');
+  }
+
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>(() => {
     const saved = localStorage.getItem('relove_products');

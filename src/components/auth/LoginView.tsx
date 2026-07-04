@@ -29,17 +29,7 @@ const getStoredUsers = (): StoredUser[] => {
   try {
     const saved = localStorage.getItem('re_love_users');
     if (!saved) {
-      const seededUsers: StoredUser[] = [
-        {
-          id: 'demo-sarah',
-          email: 'sarah.jones@example.com',
-          password: 'demopass123',
-          name: 'Sarah Jones',
-          shopName: 'UrbanArchive Vintage',
-          phone: '+62 812-9876-5432',
-          avatar: DEMO_AVATAR,
-        },
-      ];
+      const seededUsers: StoredUser[] = [];
       localStorage.setItem('re_love_users', JSON.stringify(seededUsers));
       return seededUsers;
     }
@@ -322,21 +312,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
             </button>
           </form>
 
-          {/* Quick Demo Bypass */}
-          <div className="relative flex py-5 items-center">
-            <div className="flex-grow border-t border-[#f0edec]"></div>
-            <span className="flex-shrink mx-4 text-[10px] text-[#414944]/50 uppercase tracking-widest font-extrabold">Uji Coba Cepat</span>
-            <div className="flex-grow border-t border-[#f0edec]"></div>
-          </div>
 
-          <button
-            type="button"
-            onClick={handleQuickDemoLogin}
-            className="w-full bg-[#f0edec] text-[#002d1c] hover:bg-[#ebe7e7] transition-all py-3 px-6 rounded-2xl text-xs font-black flex items-center justify-center gap-2"
-          >
-            <Sparkles size={14} className="fill-[#002d1c]" />
-            <span>Gunakan Akun Demo (Sarah Jones)</span>
-          </button>
 
           <div className="flex items-center justify-center gap-2 text-[10px] text-[#414944] mt-6 text-center leading-relaxed">
             <ShieldCheck size={14} className="text-[#3e6752]" />
