@@ -138,19 +138,21 @@ export const SellerShopView: React.FC<SellerShopViewProps> = ({
               </div>
 
               {/* Statistics Grid */}
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-xs text-[#414944] font-medium">
-                <div className="flex items-center gap-1 text-[#002d1c] font-bold">
-                  <Star size={14} className="fill-[#002d1c]" />
-                  <span>{rating} / 5.0 Rating</span>
+              {sellerProducts.length > 0 && (
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-xs text-[#414944] font-medium">
+                  <div className="flex items-center gap-1 text-[#002d1c] font-bold">
+                    <Star size={14} className="fill-[#002d1c]" />
+                    <span>{rating} / 5.0 Rating</span>
+                  </div>
+                  <span className="hidden md:inline text-neutral-300">•</span>
+                  <div>{soldCount}+ Terjual</div>
+                  <span className="hidden md:inline text-neutral-300">•</span>
+                  <div className="flex items-center gap-1">
+                    <Shield size={13} className="text-[#3e6752]" />
+                    <span>{responseRate} Respon Chat</span>
+                  </div>
                 </div>
-                <span className="hidden md:inline text-neutral-300">•</span>
-                <div>{soldCount}+ Terjual</div>
-                <span className="hidden md:inline text-neutral-300">•</span>
-                <div className="flex items-center gap-1">
-                  <Shield size={13} className="text-[#3e6752]" />
-                  <span>{responseRate} Respon Chat</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 

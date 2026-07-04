@@ -42,7 +42,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     const saved = localStorage.getItem('re_love_reviews');
     return saved ? JSON.parse(saved) : [];
   });
-  const activeShopName = userProfile?.shopName || 'UrbanArchive Vintage';
+  const activeShopName = userProfile?.shopName || '';
+  const [showShopNameModal, setShowShopNameModal] = useState(false);
+  const [inputShopName, setInputShopName] = useState('');
   const myProducts = products.filter((p) => p.sellerName === activeShopName);
   const buyerOrders = orders.filter((o) => !o.id.startsWith('ord-seller-'));
   const sellerOrders = orders.filter((o) => o.id.startsWith('ord-seller-'));
@@ -236,7 +238,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <MessageSquare size={14} />
                 <span>Total Pendapatan Toko</span>
               </div>
-              <span className="text-sm font-bold">Rp 12.450.000</span>
+              <span className="text-sm font-bold">0</span>
             </div>
           </div>
         </div>
@@ -273,7 +275,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 : 'border-transparent text-[#414944]/60 hover:text-[#414944]'
             }`}
           >
-            Dashboard Penjual <span className="bg-[#002d1c] text-[#c0edd3] text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Mitra</span>
+            Dashboard Penjual
           </button>
         </div>
 
@@ -365,287 +367,379 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         {/* INTEGRATED SELLER DASHBOARD VIEW TAB */}
         {activeProfileTab === 'seller' && (
           <div className="flex flex-col gap-8 font-geist">
-            {/* 1. Shop Header Details */}
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-[#f0edec] pb-6">
-              <div>
-                <h2 className="font-display text-[#002d1c] text-2xl font-extrabold tracking-tight mb-2">{activeShopName}</h2>
-                <div className="flex items-center gap-4 text-xs">
-                  <div className="flex items-center bg-[#d4e5c7] text-[#002d1c] px-3 py-1 rounded-full font-bold">
-                    <Star size={12} className="fill-current mr-1" />
-                    <span>4.9 / 5.0 Rating</span>
-                  </div>
+            {!activeShopName ? (
+              // Onboarding State (New user without shopName)
+              <div className="flex flex-col items-center justify-center py-16 px-4 bg-white border border-[#f0edec]/65 rounded-[24px] shadow-sm text-center">
+                <div className="w-20 h-20 rounded-full bg-[#c0edd3]/25 border border-[#c1c8c2]/20 flex items-center justify-center text-[#002d1c] mb-6 shadow-inner animate-pulse">
+                  <ShoppingBag size={36} />
                 </div>
-              </div>
-
-              <div className="flex gap-2.5">
+                <h3 className="font-display font-extrabold text-lg md:text-xl text-[#002d1c] mb-3 max-w-md leading-tight">
+                  Punya Barang untuk di Preloved? Mulai Jualan Sekarang
+                </h3>
+                <p className="text-xs text-[#414944] mb-8 max-w-sm leading-relaxed">
+                  Jual pakaian, sepatu, dan aksesoris preloved Anda yang masih sangat layak pakai di RE-LOVE.
+                </p>
                 <button
-                  onClick={() => {
-                    if (onViewOwnShop) {
-                      onViewOwnShop();
-                    } else {
-                      navigate('seller-shop');
-                    }
-                  }}
-                  className="flex items-center gap-2 bg-white border border-[#c1c8c2] text-[#002d1c] hover:bg-[#fcf9f8] px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer"
-                >
-                  <Eye size={16} />
-                  <span>Lihat Toko Anda</span>
-                </button>
-                <button
-                  onClick={() => navigate('create-listing-info')}
-                  className="flex items-center gap-2 bg-[#002d1c] text-white px-6 py-3 rounded-full text-xs font-black hover:opacity-95 active:scale-95 transition-all shadow-md"
+                  onClick={() => setShowShopNameModal(true)}
+                  className="bg-[#002d1c] text-white px-8 py-3.5 rounded-full text-xs font-black hover:opacity-95 active:scale-95 transition-all shadow-md flex items-center gap-2 cursor-pointer"
                 >
                   <PlusCircle size={16} />
-                  <span>Tambah Listing Jualan</span>
+                  <span>Mulai Berjualan</span>
                 </button>
-              </div>
-            </header>
 
-            {/* 2. Numerical Stats Bento grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {/* Earnings Card */}
-              <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
-                <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Total Pendapatan</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
-                  Rp {sellerOrders
-                    .filter((o) => o.status === 'Received' || o.status === 'Reviewed')
-                    .reduce((sum, o) => sum + o.totalAmount, 0)
-                    .toLocaleString('id-ID')}
-                </h3>
-                <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
-                  <TrendingUp size={12} className="mr-1" />
-                  <span>{sellerOrders.length > 0 ? '+12.4% meningkat bulan ini' : 'Belum ada transaksi'}</span>
-                </div>
-              </div>
-
-              {/* New Orders */}
-              <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
-                <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Pesanan Masuk</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{sellerOrders.length} Paket</h3>
-                <div className="flex items-center mt-3 text-[#ba1a1a] text-[9px] font-bold">
-                  <AlertCircle size={12} className="mr-1" />
-                  <span>{sellerOrders.filter(o => o.status === 'Waiting' || o.status === 'Paid').length} Perlu segera di-proses</span>
-                </div>
-              </div>
-
-              {/* Active counting */}
-              <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
-                <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Listing Aktif</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{myProducts.length} Barang</h3>
-                <p className="text-[9px] text-[#414944]/70 mt-3 font-normal">
-                  {myProducts.filter(p => p.isArchived).length} barang diarsipkan
-                </p>
-              </div>
-
-              {/* Response count */}
-              <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
-                <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Tingkat Penjualan</p>
-                <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
-                  {sellerOrders.length > 0 ? '100% Responsif' : 'Baru Bergabung'}
-                </h3>
-                <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
-                  <ShieldCheck size={12} className="mr-1" />
-                  <span>{sellerOrders.length > 0 ? 'Sangat Tanggap & Cepat' : 'Belum ada ulasan/pesanan'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Analytics Chart section */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-bento-gap">
-              <div className="lg:col-span-8 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col">
-                <div className="flex justify-between items-center mb-6">
-                  <div>
-                    <h3 className="text-sm font-display font-bold text-[#002d1c]">Analitik Pengunjung Toko</h3>
-                    <p className="text-[9px] text-[#414944] font-medium mt-0.5">Traffic & Konversi Pengunjung Mingguan</p>
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button
-                      onClick={() => setActiveChartFilter('7')}
-                      className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
-                        activeChartFilter === '7'
-                          ? 'bg-[#002d1c] text-white border-transparent'
-                          : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
-                      }`}
-                    >
-                      7 Hari
-                    </button>
-                    <button
-                      onClick={() => setActiveChartFilter('30')}
-                      className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
-                        activeChartFilter === '30'
-                          ? 'bg-[#002d1c] text-white border-transparent'
-                          : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
-                      }`}
-                    >
-                      Bulanan
-                    </button>
-                  </div>
-                </div>
-
-                {/* Render bar chart diagrams */}
-                <div className="flex-grow flex items-end justify-between gap-1.5 sm:gap-4 h-48 border-b border-[#f0edec] pb-3 mb-3 select-none">
-                  {chartData.map((data, index) => (
-                    <div key={index} className="w-full flex flex-col items-center group relative">
-                      <div className="absolute -top-10 scale-0 group-hover:scale-100 transition-all font-geist text-[9px] bg-[#002d1c] text-[#c0edd3] px-2 py-0.5 rounded shadow pointer-events-none z-10">
-                        Rp {(150 + Math.random() * 300).toFixed(0)}rb
-                      </div>
-                      <div
-                        className={`w-full bg-[#c0edd3]/60 rounded-t transition-all duration-500 hover:opacity-95 ${data.value}`}
-                      ></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex justify-between px-1 text-[9px] text-[#414944] uppercase tracking-wider font-bold">
-                  {chartData.map((data, index) => (
-                    <span key={index}>{data.day}</span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quick Tools Grid list */}
-              <div className="lg:col-span-4 grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => navigate('create-listing-info')}
-                  className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group"
-                >
-                  <PlusCircle size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
-                  <span className="text-[10px] font-bold text-[#1c1b1b]">Tambah Listing</span>
-                </button>
-                
-                <button
-                  onClick={() => navigate('seller-products')}
-                  className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
-                >
-                  <ShoppingBag size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
-                  <span className="text-[10px] font-bold text-[#1c1b1b]">Kelola Produk</span>
-                </button>
-                
-                <button
-                  onClick={() => navigate('seller-finance')}
-                  className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
-                >
-                  <Wallet size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
-                  <span className="text-[10px] font-bold text-[#1c1b1b]">Keuangan</span>
-                </button>
-                
-                <button
-                  onClick={() => navigate('seller-orders')}
-                  className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
-                >
-                  <Package size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
-                  <span className="text-[10px] font-bold text-[#1c1b1b]">Atur Pesanan</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 4. Active Incoming Orders & Inventory Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-bento-gap">
-              {/* Incoming Order confirmation */}
-              <div className="lg:col-span-6 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] shadow-sm text-left">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-display font-bold text-sm text-[#002d1c]">Atur Pesanan Toko</h3>
-                  <span onClick={() => navigate('seller-orders')} className="text-[11px] text-[#002d1c] font-bold hover:underline cursor-pointer">Lihat Semua</span>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  {sellerOrders.length === 0 ? (
-                    <p className="text-center py-6 text-[11px] text-[#414944]/70">Belum ada pesanan masuk.</p>
-                  ) : (
-                    sellerOrders.slice(0, 2).map((order) => {
-                      const isWaiting = order.status === 'Waiting';
-                      const isPaid = order.status === 'Paid';
-                      const isShipped = order.status === 'Shipped' || order.status === 'Courier';
-                      const isCompleted = order.status === 'Received' || order.status === 'Reviewed';
-
-                      return (
-                        <div
-                          key={order.id}
-                          onClick={() => navigate('seller-orders')}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-[16px] border border-[#f0edec] text-xs gap-3 cursor-pointer hover:border-[#002d1c]/45 transition-all"
+                {/* Inline modal / form overlay for Shop Name Input */}
+                {showShopNameModal && (
+                  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-[24px] border border-[#f0edec] shadow-xl p-6 w-full max-w-md relative font-geist text-left">
+                      <button
+                        onClick={() => setShowShopNameModal(false)}
+                        className="absolute top-4 right-4 text-[#414944] hover:text-black"
+                      >
+                        <X size={20} />
+                      </button>
+                      <h4 className="font-display font-extrabold text-[#002d1c] text-lg mb-2">Buka Toko Anda</h4>
+                      <p className="text-[11px] text-[#414944] mb-6 leading-relaxed">
+                        Masukkan nama unik untuk toko preloved Anda di RE-LOVE.
+                      </p>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (!inputShopName.trim()) {
+                            alert('Silakan isi nama toko Anda.');
+                            return;
+                          }
+                          if (onUpdateProfile) {
+                            const updated = {
+                              ...userProfile,
+                              shopName: inputShopName.trim()
+                            };
+                            onUpdateProfile(updated);
+                            // Save in localStorage immediately
+                            localStorage.setItem('re_love_active_user', JSON.stringify(updated));
+                            localStorage.setItem('re_love_user_profile', JSON.stringify(updated));
+                            
+                            const savedUsers = localStorage.getItem('re_love_users');
+                            if (savedUsers) {
+                              try {
+                                const parsedUsers = JSON.parse(savedUsers);
+                                const updatedUsers = parsedUsers.map((u: any) => 
+                                  u.email === userProfile?.email ? { ...u, shopName: inputShopName.trim() } : u
+                                );
+                                localStorage.setItem('re_love_users', JSON.stringify(updatedUsers));
+                              } catch (e) {}
+                            }
+                          }
+                          setShowShopNameModal(false);
+                          // Redirect to create listing
+                          navigate('create-listing-info');
+                        }}
+                        className="flex flex-col gap-4"
+                      >
+                        <div>
+                          <label className="text-[10px] font-bold text-[#414944] uppercase tracking-wider block mb-1">Nama Toko</label>
+                          <input
+                            type="text"
+                            placeholder="Contoh: Budi Preloved Store"
+                            value={inputShopName}
+                            onChange={(e) => setInputShopName(e.target.value)}
+                            className="w-full border border-[#c1c8c2] focus:border-[#002d1c] rounded-xl px-4 py-3 text-xs outline-none transition-all font-geist"
+                            autoFocus
+                          />
+                        </div>
+                        <button
+                          type="submit"
+                          className="bg-[#002d1c] text-white py-3.5 rounded-xl text-xs font-black hover:opacity-95 transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer mt-2"
                         >
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[#c0edd3]/25 border border-[#c1c8c2]/20 flex items-center justify-center text-[#002d1c] flex-shrink-0">
-                              <ShoppingBag size={16} />
-                            </div>
-                            <div className="text-left">
-                              <h4 className="font-bold text-[#1c1b1b]">Order #{order.id.toUpperCase()}</h4>
-                              <p className="text-[9px] text-[#414944] mt-0.5">Rp {order.totalAmount.toLocaleString('id-ID')} • {order.courier}</p>
-                            </div>
-                          </div>
-                          <span className={`px-2.5 py-0.5 text-[9px] rounded-full font-bold uppercase self-start sm:self-auto ${
-                            isWaiting ? 'bg-[#fdfaf2] text-[#8a5710]' :
-                            isPaid ? 'bg-[#edf5f1] text-[#002d1c]' :
-                            isShipped ? 'bg-blue-50 text-blue-700' :
-                            'bg-emerald-50 text-emerald-700'
-                          }`}>
-                            {isWaiting && 'Baru'}
-                            {isPaid && 'Perlu Kirim'}
-                            {isShipped && 'Dikirim'}
-                            {isCompleted && 'Selesai'}
-                          </span>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
+                          <Check size={16} />
+                          <span>Buat Toko & Tambah Listing</span>
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Shop Listings Inventory */}
-              <div className="lg:col-span-6 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] shadow-sm">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-display font-bold text-sm text-[#002d1c]">Barang Jualan Anda ({myProducts.length})</h3>
-                  <span onClick={() => navigate('seller-products')} className="text-[11px] text-[#002d1c] font-bold hover:underline cursor-pointer">Selengkapnya</span>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  {myProducts.slice(0, 3).map((prod) => (
-                    <div
-                      key={prod.id}
-                      onClick={() => onSelectProduct(prod)}
-                      className="flex items-center justify-between p-3 bg-white rounded-[16px] border border-[#f0edec] text-xs cursor-pointer hover:border-[#002d1c]/40 transition-all gap-3"
-                    >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
-                        <div className="w-10 h-10 bg-[#ebe7e7] rounded-xl overflow-hidden flex-shrink-0">
-                          <img alt={prod.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" src={prod.imagePrimary} />
+            ) : (
+              // Active Store
+              <>
+                {/* 1. Shop Header Details */}
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border-b border-[#f0edec] pb-6">
+                  <div>
+                    <h2 className="font-display text-[#002d1c] text-2xl font-extrabold tracking-tight mb-2">{activeShopName}</h2>
+                    <div className="flex items-center gap-4 text-xs">
+                      {myProducts.length > 0 && (
+                        <div className="flex items-center bg-[#d4e5c7] text-[#002d1c] px-3 py-1 rounded-full font-bold">
+                          <Star size={12} className="fill-current mr-1" />
+                          <span>4.9 / 5.0 Rating</span>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-bold text-[#1c1b1b] line-clamp-1">{prod.name}</h4>
-                          <p className="text-[9px] text-[#414944] mt-0.5">Rp {prod.price.toLocaleString('id-ID')} • Size {prod.size}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5">
+                    <button
+                      onClick={() => {
+                        if (onViewOwnShop) {
+                          onViewOwnShop();
+                        } else {
+                          navigate('seller-shop');
+                        }
+                      }}
+                      className="flex items-center gap-2 bg-white border border-[#c1c8c2] text-[#002d1c] hover:bg-[#fcf9f8] px-5 py-3 rounded-full text-xs font-black transition-all cursor-pointer"
+                    >
+                      <Eye size={16} />
+                      <span>Lihat Toko Anda</span>
+                    </button>
+                    <button
+                      onClick={() => navigate('create-listing-info')}
+                      className="flex items-center gap-2 bg-[#002d1c] text-white px-6 py-3 rounded-full text-xs font-black hover:opacity-95 active:scale-95 transition-all shadow-md"
+                    >
+                      <PlusCircle size={16} />
+                      <span>Tambah Listing Jualan</span>
+                    </button>
+                  </div>
+                </header>
+
+                {myProducts.length > 0 ? (
+                  <>
+                    {/* 2. Numerical Stats Bento grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      {/* Earnings Card */}
+                      <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
+                        <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Total Pendapatan</p>
+                        <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
+                          Rp {sellerOrders
+                            .filter((o) => o.status === 'Received' || o.status === 'Reviewed')
+                            .reduce((sum, o) => sum + o.totalAmount, 0)
+                            .toLocaleString('id-ID')}
+                        </h3>
+                        <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
+                          <TrendingUp size={12} className="mr-1" />
+                          <span>{sellerOrders.length > 0 ? '+12.4% meningkat bulan ini' : 'Belum ada transaksi'}</span>
                         </div>
                       </div>
-                      <ChevronRight size={14} className="text-[#414944] flex-shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
-            {/* 5. Ulasan Pembeli Terbaru */}
-            <div className="border-t border-[#f0edec] pt-6 mb-2">
-              <h3 className="font-display font-bold text-sm text-[#002d1c] mb-4">Ulasan Pembeli</h3>
-              {reviews.length === 0 ? (
-                <p className="text-left text-[11px] text-[#414944]/70">Belum ada ulasan untuk toko Anda.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {reviews.map((rev) => (
-                    <div key={rev.id} className="p-4 bg-[#fcf9f8] border border-[#f0edec] rounded-[20px] flex flex-col gap-2 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#1c1b1b]">{rev.buyerName}</span>
-                        <div className="flex text-yellow-500 gap-0.5">
-                          {Array.from({ length: rev.stars }).map((_, s) => (
-                            <Star key={s} size={10} className="fill-current text-yellow-500" />
+                      {/* New Orders */}
+                      <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
+                        <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Pesanan Masuk</p>
+                        <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{sellerOrders.length} Paket</h3>
+                        <div className="flex items-center mt-3 text-[#ba1a1a] text-[9px] font-bold">
+                          <AlertCircle size={12} className="mr-1" />
+                          <span>{sellerOrders.filter(o => o.status === 'Waiting' || o.status === 'Paid').length} Perlu segera di-proses</span>
+                        </div>
+                      </div>
+
+                      {/* Active counting */}
+                      <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
+                        <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Listing Aktif</p>
+                        <h3 className="text-xl font-display font-extrabold text-[#002d1c]">{myProducts.length} Barang</h3>
+                        <p className="text-[9px] text-[#414944]/70 mt-3 font-normal">
+                          {myProducts.filter(p => p.isArchived).length} barang diarsipkan
+                        </p>
+                      </div>
+
+                      {/* Response count */}
+                      <div className="bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col justify-between shadow-sm">
+                        <p className="text-[#414944] text-[10px] font-bold uppercase tracking-wider mb-2">Tingkat Penjualan</p>
+                        <h3 className="text-xl font-display font-extrabold text-[#002d1c]">
+                          {sellerOrders.length > 0 ? '100% Responsif' : 'Baru Bergabung'}
+                        </h3>
+                        <div className="flex items-center mt-3 text-[#002d1c] text-[9px] font-bold">
+                          <ShieldCheck size={12} className="mr-1" />
+                          <span>{sellerOrders.length > 0 ? 'Sangat Tanggap & Cepat' : 'Belum ada ulasan/pesanan'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 3. Analytics Chart section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-bento-gap">
+                      <div className="lg:col-span-8 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] flex flex-col">
+                        <div className="flex justify-between items-center mb-6">
+                          <div>
+                            <h3 className="text-sm font-display font-bold text-[#002d1c]">Analitik Pengunjung Toko</h3>
+                            <p className="text-[9px] text-[#414944] font-medium mt-0.5">Traffic & Konversi Pengunjung Mingguan</p>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => setActiveChartFilter('7')}
+                              className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
+                                activeChartFilter === '7'
+                                  ? 'bg-[#002d1c] text-white border-transparent'
+                                  : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
+                              }`}
+                            >
+                              7 Hari
+                            </button>
+                            <button
+                              onClick={() => setActiveChartFilter('30')}
+                              className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all border ${
+                                activeChartFilter === '30'
+                                  ? 'bg-[#002d1c] text-white border-transparent'
+                                  : 'border-[#c1c8c2] text-[#414944] hover:bg-[#f6f3f2]'
+                              }`}
+                            >
+                              Bulanan
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Render bar chart diagrams */}
+                        <div className="flex-grow flex items-end justify-between gap-1.5 sm:gap-4 h-48 border-b border-[#f0edec] pb-3 mb-3 select-none">
+                          {chartData.map((data, index) => (
+                            <div key={index} className="w-full flex flex-col items-center group relative">
+                              <div className="absolute -top-10 scale-0 group-hover:scale-100 transition-all font-geist text-[9px] bg-[#002d1c] text-[#c0edd3] px-2 py-0.5 rounded shadow pointer-events-none z-10">
+                                Rp {(150 + Math.random() * 300).toFixed(0)}rb
+                              </div>
+                              <div
+                                className={`w-full bg-[#c0edd3]/60 rounded-t transition-all duration-500 hover:opacity-95 ${data.value}`}
+                              ></div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between px-1 text-[9px] text-[#414944] uppercase tracking-wider font-bold">
+                          {chartData.map((data, index) => (
+                            <span key={index}>{data.day}</span>
                           ))}
                         </div>
                       </div>
-                      <p className="text-[#414944] italic leading-normal">
-                        "{rev.text}"
-                      </p>
-                      <span className="text-[9px] text-[#414944]/55 text-right font-geist mt-1">{rev.date}</span>
+
+                      {/* Quick Tools Grid list */}
+                      <div className="lg:col-span-4 grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => navigate('create-listing-info')}
+                          className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group"
+                        >
+                          <PlusCircle size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
+                          <span className="text-[10px] font-bold text-[#1c1b1b]">Tambah Listing</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => navigate('seller-products')}
+                          className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
+                        >
+                          <ShoppingBag size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
+                          <span className="text-[10px] font-bold text-[#1c1b1b]">Kelola Produk</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => navigate('seller-finance')}
+                          className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
+                        >
+                          <Wallet size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
+                          <span className="text-[10px] font-bold text-[#1c1b1b]">Keuangan</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => navigate('seller-orders')}
+                          className="bg-[#fcf9f8] rounded-[24px] p-4 border border-[#f0edec] hover:border-[#002d1c] transition-all flex flex-col items-center justify-center text-center gap-2 shadow-sm group cursor-pointer"
+                        >
+                          <Package size={24} className="text-[#002d1c] group-hover:scale-105 transition-transform" />
+                          <span className="text-[10px] font-bold text-[#1c1b1b]">Atur Pesanan</span>
+                        </button>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+
+                    {/* 4. Active Incoming Orders & Inventory Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-bento-gap">
+                      {/* Incoming Order confirmation */}
+                      <div className="lg:col-span-6 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] shadow-sm text-left">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="font-display font-bold text-sm text-[#002d1c]">Atur Pesanan Toko</h3>
+                          <span onClick={() => navigate('seller-orders')} className="text-[11px] text-[#002d1c] font-bold hover:underline cursor-pointer">Lihat Semua</span>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                          {sellerOrders.length === 0 ? (
+                            <p className="text-center py-6 text-[11px] text-[#414944]/70">Belum ada pesanan masuk.</p>
+                          ) : (
+                            sellerOrders.slice(0, 2).map((order) => {
+                              return (
+                                <div
+                                  key={order.id}
+                                  onClick={() => navigate('seller-orders')}
+                                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-[16px] border border-[#f0edec] text-xs gap-3 cursor-pointer hover:border-[#002d1c]/45 transition-all"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-[#c0edd3]/25 border border-[#c1c8c2]/20 flex items-center justify-center text-[#002d1c] flex-shrink-0">
+                                      <ShoppingBag size={16} />
+                                    </div>
+                                    <div>
+                                      <h4 className="font-bold text-[#1c1b1b]">{order.productName}</h4>
+                                      <p className="text-[10px] text-[#414944]/65 mt-0.5">Rp {order.totalAmount.toLocaleString('id-ID')} • {order.courier}</p>
+                                    </div>
+                                  </div>
+                                  <span className="bg-[#ffdad6] text-[#ba1a1a] px-2 py-0.5 rounded text-[9px] font-bold uppercase">
+                                    {order.status}
+                                  </span>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Inventory listing */}
+                      <div className="lg:col-span-6 bg-[#fcf9f8] rounded-[24px] p-6 border border-[#f0edec] shadow-sm">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="font-display font-bold text-sm text-[#002d1c]">Barang Jualan Anda ({myProducts.length})</h3>
+                          <span onClick={() => navigate('seller-products')} className="text-[11px] text-[#002d1c] font-bold hover:underline cursor-pointer">Selengkapnya</span>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                          {myProducts.slice(0, 3).map((prod) => (
+                            <div
+                              key={prod.id}
+                              onClick={() => onSelectProduct(prod)}
+                              className="flex items-center justify-between p-3 bg-white rounded-[16px] border border-[#f0edec] text-xs cursor-pointer hover:border-[#002d1c]/40 transition-all gap-3"
+                            >
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <div className="w-10 h-10 bg-[#ebe7e7] rounded-xl overflow-hidden flex-shrink-0">
+                                  <img alt={prod.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" src={prod.imagePrimary} />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="font-bold text-[#1c1b1b] line-clamp-1">{prod.name}</h4>
+                                  <p className="text-[9px] text-[#414944] mt-0.5">Rp {prod.price.toLocaleString('id-ID')} • Size {prod.size}</p>
+                                </div>
+                              </div>
+                              <ChevronRight size={14} className="text-[#414944] flex-shrink-0" />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 5. Ulasan Pembeli Terbaru */}
+                    <div className="border-t border-[#f0edec] pt-6 mb-2">
+                      <h3 className="font-display font-bold text-sm text-[#002d1c] mb-4">Ulasan Pembeli</h3>
+                      {reviews.length === 0 ? (
+                        <p className="text-left text-[11px] text-[#414944]/70">Belum ada ulasan untuk toko Anda.</p>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {reviews.map((rev) => (
+                            <div key={rev.id} className="p-4 bg-[#fcf9f8] border border-[#f0edec] rounded-[20px] flex flex-col gap-2 text-xs">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-[#1c1b1b]">{rev.buyerName}</span>
+                                <div className="flex text-yellow-500 gap-0.5">
+                                  {Array.from({ length: rev.stars }).map((_, s) => (
+                                    <Star key={s} size={10} className="fill-current text-yellow-500" />
+                                  ))}
+                                </div>
+                              </div>
+                              <p className="text-[#414944] italic leading-normal">
+                                "{rev.text}"
+                              </p>
+                              <span className="text-[9px] text-[#414944]/55 text-right font-geist mt-1">{rev.date}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  // Created Shop Name but 0 Products (Only shows Header section)
+                  null
+                )}
+              </>
+            )}
           </div>
         )}
       </div>

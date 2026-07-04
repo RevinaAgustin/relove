@@ -114,7 +114,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, navigate }
         email: normalizedEmail,
         password: normalizedPassword,
         name: fullName.trim(),
-        shopName: `${fullName.trim().split(' ')[0] || 'Toko'} Preloved`,
+        shopName: '',
         phone: '',
         avatar: DEMO_AVATAR,
       };
