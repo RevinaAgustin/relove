@@ -87,6 +87,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
       else if (cat.includes('Celana')) sub = 'Bottoms';
       else if (cat.includes('Mainan')) sub = 'Toys';
       else if (cat.includes('Aksesoris')) sub = 'Aksesoris';
+      else if (cat.includes('Sepatu')) sub = 'Footwear';
     }
     return { seg, sub };
   };
@@ -127,7 +128,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
       case 'Mens':
         return ['Tops', 'Bottoms', 'Outerwear', 'Footwear', 'Aksesoris'];
       case 'Kids':
-        return ['Tops', 'Bottoms', 'Toys', 'Aksesoris'];
+        return ['Tops', 'Bottoms', 'Toys', 'Aksesoris', 'Footwear'];
       default:
         return ['Tops'];
     }
@@ -142,7 +143,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
   const handleSubcategoryChange = (sub: string) => {
     setSubcategory(sub);
     if (sub === 'Footwear') {
-      setSize(segment === 'Womens' ? '38' : '41');
+      setSize(segment === 'Womens' ? '38' : segment === 'Kids' ? '37' : '41');
     } else if (sub === 'Aksesoris' || sub === 'Toys') {
       setSize('Sedang');
     } else {
@@ -468,6 +469,7 @@ export const CreateListingView: React.FC<CreateListingViewProps> = ({
       else if (subcategory === 'Bottoms') finalCategory = 'Celana Anak';
       else if (subcategory === 'Toys') finalCategory = 'Mainan Anak';
       else if (subcategory === 'Aksesoris') finalCategory = 'Aksesoris Anak';
+      else if (subcategory === 'Footwear') finalCategory = 'Sepatu Anak';
     }
 
     onPublishListing({

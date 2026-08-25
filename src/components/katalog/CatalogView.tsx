@@ -76,6 +76,11 @@ const CATEGORY_STRUCTURE: CategorySegment[] = [
         id: 'Outerwear',
         label: 'Outerwear',
         matches: (p) => p.category.toLowerCase().includes('jaket') || p.name.toLowerCase().includes('jacket') || p.name.toLowerCase().includes('jaket') || p.name.toLowerCase().includes('coat') || p.name.toLowerCase().includes('sweater')
+      },
+      {
+        id: 'Aksesoris',
+        label: 'Aksesoris',
+        matches: (p) => p.category.toLowerCase().includes('aksesoris') || p.category.toLowerCase().includes('accessories') || p.category.toLowerCase().includes('tas') || p.name.toLowerCase().includes('aksesoris') || p.name.toLowerCase().includes('accessories') || p.name.toLowerCase().includes('tas') || p.name.toLowerCase().includes('tote')
       }
     ]
   },
@@ -102,6 +107,11 @@ const CATEGORY_STRUCTURE: CategorySegment[] = [
         id: 'Outerwear',
         label: 'Outerwear',
         matches: (p) => p.category.toLowerCase().includes('jaket') || p.name.toLowerCase().includes('jacket') || p.name.toLowerCase().includes('jaket') || p.name.toLowerCase().includes('coat') || p.name.toLowerCase().includes('sweater')
+      },
+      {
+        id: 'Aksesoris',
+        label: 'Aksesoris',
+        matches: (p) => p.category.toLowerCase().includes('aksesoris') || p.category.toLowerCase().includes('accessories') || p.category.toLowerCase().includes('tas') || p.name.toLowerCase().includes('aksesoris') || p.name.toLowerCase().includes('accessories') || p.name.toLowerCase().includes('tas') || p.name.toLowerCase().includes('tote')
       }
     ]
   },
@@ -112,17 +122,27 @@ const CATEGORY_STRUCTURE: CategorySegment[] = [
       {
         id: 'Tops',
         label: 'Tops',
-        matches: (p) => p.name.toLowerCase().includes('anak') || p.description.toLowerCase().includes('anak') || p.category.toLowerCase().includes('anak')
+        matches: (p) => p.category.toLowerCase().includes('anak') && (p.category.toLowerCase().includes('atasan') || p.category.toLowerCase().includes('kaos') || p.category.toLowerCase().includes('kemeja') || p.name.toLowerCase().includes('kaos') || p.name.toLowerCase().includes('kemeja') || p.name.toLowerCase().includes('baju'))
       },
       {
         id: 'Bottoms',
         label: 'Bottoms',
-        matches: (p) => p.name.toLowerCase().includes('anak') || p.description.toLowerCase().includes('anak') || p.category.toLowerCase().includes('anak')
+        matches: (p) => p.category.toLowerCase().includes('anak') && (p.category.toLowerCase().includes('celana') || p.category.toLowerCase().includes('rok') || p.name.toLowerCase().includes('celana') || p.name.toLowerCase().includes('rok'))
       },
       {
         id: 'Toys',
         label: 'Toys',
         matches: (p) => p.category.toLowerCase().includes('mainan') || p.name.toLowerCase().includes('mainan') || p.description.toLowerCase().includes('mainan')
+      },
+      {
+        id: 'Aksesoris',
+        label: 'Aksesoris',
+        matches: (p) => p.category.toLowerCase().includes('anak') && (p.category.toLowerCase().includes('aksesoris') || p.name.toLowerCase().includes('aksesoris') || p.name.toLowerCase().includes('topi') || p.name.toLowerCase().includes('tas sekolah') || p.name.toLowerCase().includes('tas'))
+      },
+      {
+        id: 'Footwear',
+        label: 'Footwear',
+        matches: (p) => p.category.toLowerCase().includes('anak') && (p.category.toLowerCase().includes('sepatu') || p.name.toLowerCase().includes('sepatu') || p.name.toLowerCase().includes('sandal') || p.category.toLowerCase().includes('footwear'))
       }
     ]
   }
@@ -172,6 +192,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({
     const catLower = selectedCategory.toLowerCase();
     if (catLower === 'footwear' || catLower === 'sepatu') {
       return ['Semua', '37', '38', '39', '40', '41', '42', '43', '44', '45'];
+    }
+    if (catLower === 'aksesoris' || catLower === 'toys' || catLower === 'mainan') {
+      return ['Semua', 'Kecil', 'Sedang', 'Besar'];
     }
     if (['dresses', 'tops', 'bottoms', 'outerwear', 'pakaian pria', 'pakaian wanita', 'atasan'].includes(catLower)) {
       return ['Semua', 'S', 'M', 'L', 'XL', 'One Size'];

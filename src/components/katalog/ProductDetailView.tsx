@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Star, Shield, ArrowLeft, Heart, ShoppingCart, HelpCircle, UserCheck, Edit2, Trash2, Archive } from 'lucide-react';
+import { Star, Shield, ArrowLeft, Heart, ShoppingCart, HelpCircle, UserCheck, Edit2, Trash2, Archive, MessageSquare } from 'lucide-react';
 import { Product } from '../../types';
 
 interface ProductDetailViewProps {
@@ -19,6 +19,7 @@ interface ProductDetailViewProps {
   onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (productId: string) => void;
   onUpdateProduct?: (product: Product) => void;
+  onChatSeller?: (sellerName: string, sellerRating: number, productName?: string, productImage?: string) => void;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
@@ -33,6 +34,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   onEditProduct,
   onDeleteProduct,
   onUpdateProduct,
+  onChatSeller,
 }) => {
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
@@ -261,6 +263,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     <ShoppingCart size={16} />
                     Tambah ke Keranjang
                   </button>
+                  <button
+                    onClick={() => onChatSeller && onChatSeller(product.sellerName, product.sellerRating, product.name, product.imagePrimary)}
+                    className="w-full bg-transparent border border-[#002d1c]/30 text-[#002d1c] hover:bg-[#1a4331]/5 text-sm py-4 rounded-[16px] font-geist font-bold flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer"
+                  >
+                    <MessageSquare size={16} />
+                    Chat Penjual
+                  </button>
                 </div>
               )}
             </section>
@@ -285,12 +294,21 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => onGoToShop(product.sellerName)}
-                    className="px-4 py-2 bg-[#f0edec] hover:bg-[#ebe7e7] text-xs font-geist font-bold text-[#1c1b1b] rounded-full transition-colors cursor-pointer"
-                  >
-                    Lihat Toko
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => onChatSeller && onChatSeller(product.sellerName, product.sellerRating, product.name, product.imagePrimary)}
+                      className="px-4 py-2 bg-[#002d1c] hover:bg-[#002d1c]/90 text-xs font-geist font-bold text-white rounded-full transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <MessageSquare size={12} />
+                      <span>Chat Penjual</span>
+                    </button>
+                    <button
+                      onClick={() => onGoToShop(product.sellerName)}
+                      className="px-4 py-2 bg-[#f0edec] hover:bg-[#ebe7e7] text-xs font-geist font-bold text-[#1c1b1b] rounded-full transition-colors cursor-pointer"
+                    >
+                      Lihat Toko
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-[#f0edec] font-geist">

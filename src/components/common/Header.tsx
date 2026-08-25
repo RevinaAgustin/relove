@@ -9,54 +9,34 @@ import { Screen } from '../../types';
 
 const WANITA_COLUMNS = [
   {
-    title: 'BAJU',
-    items: ['T-shirts', 'Kemeja', 'Blouses', 'Cardigans', 'Crop tops', 'Sweater', 'Hoodies', 'Bottoms', 'Dress', 'Skirts', 'Mini skirts', 'Jaket', 'Blazers']
+    title: 'PAKAIAN',
+    items: ['Tops', 'Bottoms', 'Dresses', 'Outerwear']
   },
   {
-    title: 'TAS',
-    items: ['Handbags', 'Shoulder bags', 'Crossbody bags', 'Tote bags', 'Backpacks', 'Tas dompet']
-  },
-  {
-    title: 'SEPATU',
-    items: ['Sneakers', 'Heels', 'Boots', 'Sandals & slides', 'Loafers', 'Platforms', 'Flats', 'Wedges']
-  },
-  {
-    title: 'ACCESSORIES',
-    items: ['Belts', 'Hats', 'Dompet', 'Jewellery', 'Sunglasses', 'Watches', 'Scarves']
+    title: 'LAINNYA',
+    items: ['Footwear', 'Aksesoris']
   }
 ];
 
 const PRIA_COLUMNS = [
   {
-    title: 'BAJU',
-    items: ['Kaos', 'Kemeja', 'Polo', 'Sweater', 'Cardigans', 'Hoodies', 'Celana Panjang', 'Celana Pendek', 'Jaket', 'Blazers', 'Coat']
+    title: 'PAKAIAN',
+    items: ['Tops', 'Bottoms', 'Outerwear']
   },
   {
-    title: 'TAS',
-    items: ['Backpacks', 'Sling bags', 'Briefcases', 'Duffel bags', 'Waist bags', 'Clutch']
-  },
-  {
-    title: 'SEPATU',
-    items: ['Sneakers', 'Boots', 'Loafers', 'Oxford', 'Sandals', 'Slip-on', 'Athletic']
-  },
-  {
-    title: 'ACCESSORIES',
-    items: ['Belts', 'Hats', 'Watches', 'Sunglasses', 'Ties', 'Wallets', 'Socks']
+    title: 'LAINNYA',
+    items: ['Footwear', 'Aksesoris']
   }
 ];
 
 const ANAK_COLUMNS = [
   {
-    title: 'BAJU ANAK',
-    items: ['Kaos', 'Kemeja', 'Dress', 'Celana', 'Jaket', 'Sweater', 'Piyama', 'Seragam', 'Setelan']
+    title: 'PAKAIAN',
+    items: ['Tops', 'Bottoms']
   },
   {
-    title: 'SEPATU ANAK',
-    items: ['Sneakers', 'Sandals', 'Flats', 'Boots', 'School Shoes', 'Sports Shoes']
-  },
-  {
-    title: 'AKSESORIS & TAS',
-    items: ['Tas Sekolah', 'Topi', 'Kaos Kaki', 'Ikat Rambut', 'Kacamata', 'Jam Tangan']
+    title: 'LAINNYA',
+    items: ['Toys', 'Aksesoris', 'Footwear']
   }
 ];
 
@@ -177,8 +157,8 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleItemClick = (gender: string, subCategory: string) => {
     setSelectedGender(gender);
-    setSearchTerm(subCategory);
-    setSelectedCategory('Semua');
+    setSelectedCategory(subCategory);
+    setSearchTerm('');
     setActiveDropdown(null);
     navigate('catalog');
   };
@@ -186,13 +166,7 @@ export const Header: React.FC<HeaderProps> = ({
   const handleGenderClick = (gender: 'Wanita' | 'Pria' | 'Anak-anak') => {
     setSelectedGender(gender);
     setSearchTerm('');
-    if (gender === 'Wanita') {
-      setSelectedCategory('Pakaian Wanita');
-    } else if (gender === 'Pria') {
-      setSelectedCategory('Pakaian Pria');
-    } else {
-      setSelectedCategory('Semua');
-    }
+    setSelectedCategory('Semua');
     setActiveDropdown(null);
     navigate('catalog');
   };
@@ -212,20 +186,19 @@ export const Header: React.FC<HeaderProps> = ({
 
     return (
       <div 
-        className="absolute top-[calc(100%-8px)] left-0 right-0 bg-white rounded-[32px] border border-black/5 shadow-2xl p-8 z-50 font-geist"
-        style={{ width: '100%' }}
+        className="absolute top-[100%] left-1/2 -translate-x-1/2 mt-2 bg-white rounded-[24px] border border-black/5 shadow-xl p-5 z-50 font-geist w-[320px]"
         onMouseEnter={() => {
           if (dropdownTimeoutRef.current) clearTimeout(dropdownTimeoutRef.current);
         }}
         onMouseLeave={handleMouseLeave}
       >
-        <div className={`grid gap-8 ${activeDropdown === 'anak' ? 'grid-cols-3' : 'grid-cols-4'}`}>
+        <div className="grid gap-6 grid-cols-2">
           {columns.map((col, idx) => (
-            <div key={idx} className="flex flex-col gap-3">
-              <h4 className="text-[11px] font-bold text-[#002d1c] tracking-wider uppercase border-b border-[#f0edec] pb-1.5">
+            <div key={idx} className="flex flex-col gap-2">
+              <h4 className="text-[10px] font-bold text-[#002d1c] tracking-wider uppercase border-b border-[#f0edec] pb-1">
                 {col.title}
               </h4>
-              <ul className="flex flex-col gap-1.5 text-left">
+              <ul className="flex flex-col gap-1 text-left">
                 {col.items.map((item) => (
                   <li key={item}>
                     <button
@@ -272,6 +245,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Wanita
           </button>
+          {activeDropdown === 'wanita' && renderDropdownContent('wanita')}
         </div>
 
         <div 
@@ -285,6 +259,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Pria
           </button>
+          {activeDropdown === 'pria' && renderDropdownContent('pria')}
         </div>
 
         <div 
@@ -298,6 +273,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Anak-anak
           </button>
+          {activeDropdown === 'anak' && renderDropdownContent('anak')}
         </div>
       </div>
 
@@ -394,8 +370,6 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
       </div>
-
-      {renderDropdownContent()}
     </nav>
   );
 };

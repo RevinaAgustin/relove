@@ -24,9 +24,10 @@ interface ChatThread {
 
 interface MessagesViewProps {
   navigate: (screen: any) => void;
+  initialMobileActive?: boolean;
 }
 
-export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
+export const MessagesView: React.FC<MessagesViewProps> = ({ navigate, initialMobileActive }) => {
   const [threads, setThreads] = useState<ChatThread[]>(() => {
     const saved = localStorage.getItem('re_love_chats');
     if (saved) {
@@ -39,6 +40,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
   });
 
   const [activeThreadId, setActiveThreadId] = useState<string | null>(() => {
+    const activeId = localStorage.getItem('re_love_active_chat_thread_id');
+    if (activeId) return activeId;
+
     const saved = localStorage.getItem('re_love_chats');
     if (saved) {
       try {
@@ -51,7 +55,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
   const [inputText, setInputText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [mobileActiveThread, setMobileActiveThread] = useState(false);
+  const [mobileActiveThread, setMobileActiveThread] = useState(initialMobileActive || false);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +73,16 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
   useEffect(() => {
     scrollToBottom();
   }, [threads, activeThreadId, isTyping]);
+
+  useEffect(() => {
+    const activeId = localStorage.getItem('re_love_active_chat_thread_id');
+    if (activeId) {
+      setActiveThreadId(activeId);
+    }
+    if (initialMobileActive) {
+      setMobileActiveThread(true);
+    }
+  }, [initialMobileActive]);
 
   const activeThread = threads.find((t) => t.id === activeThreadId) || threads[0];
 
@@ -159,6 +173,7 @@ export const MessagesView: React.FC<MessagesViewProps> = ({ navigate }) => {
   const handleSelectThread = (id: string) => {
     setActiveThreadId(id);
     setMobileActiveThread(true);
+    localStorage.setItem('re_love_active_chat_thread_id', id);
     // Mark as read
     const updated = threads.map((t) => {
       if (t.id === id) {

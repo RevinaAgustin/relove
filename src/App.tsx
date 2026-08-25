@@ -68,6 +68,7 @@ export default function App() {
   });
   const [currentScreen, setCurrentScreen] = useState<Screen>('explore');
   const [selectedSellerName, setSelectedSellerName] = useState<string>('');
+  const [messagesMobileActive, setMessagesMobileActive] = useState<boolean>(false);
   const [shopBackScreen, setShopBackScreen] = useState<Screen>('explore');
   const [userMode, setUserMode] = useState<'buyer' | 'seller'>('buyer');
   const [sellerBalance, setSellerBalance] = useState<number>(12450000);
@@ -237,8 +238,105 @@ export default function App() {
   const [selectedGender, setSelectedGender] = useState<string>('Semua');
   const [lastProductListScreen, setLastProductListScreen] = useState<'explore' | 'catalog'>('explore');
 
+  const handleOpenChat = (
+    sellerName: string,
+    sellerRating: number,
+    productName?: string,
+    productImage?: string,
+    initialText?: string
+  ) => {
+    if (!isLoggedIn) {
+      alert('Silakan masuk ke akun Anda terlebih dahulu untuk berkomunikasi dengan penjual.');
+      navigate('login');
+      return;
+    }
+
+    const savedChats = localStorage.getItem('re_love_chats');
+    let threads: any[] = [];
+    if (savedChats) {
+      try {
+        threads = JSON.parse(savedChats);
+      } catch (e) {}
+    }
+
+    let thread = threads.find(
+      (t) => t.sellerName.toLowerCase() === sellerName.toLowerCase()
+    );
+
+    const timeString = new Date().toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    if (thread) {
+      if (productName) {
+        thread.productName = productName;
+        thread.productImage = productImage;
+      }
+      if (initialText) {
+        const messageExists = thread.messages.some((m: any) => m.text === initialText);
+        if (!messageExists) {
+          const newMsg = {
+            id: `msg-${Date.now()}`,
+            sender: 'seller',
+            text: initialText,
+            timestamp: timeString,
+          };
+          thread.messages.push(newMsg);
+          thread.lastMessage = initialText;
+          thread.lastMessageTime = timeString;
+        }
+      }
+      threads = [thread, ...threads.filter((t) => t.id !== thread.id)];
+    } else {
+      const newThreadId = `thread-${Date.now()}`;
+      const messages = [];
+      let lastMsg = 'Mulai percakapan...';
+
+      if (initialText) {
+        messages.push({
+          id: `msg-${Date.now()}`,
+          sender: 'seller',
+          text: initialText,
+          timestamp: timeString,
+        });
+        lastMsg = initialText;
+      } else if (productName) {
+        messages.push({
+          id: `msg-${Date.now()}`,
+          sender: 'buyer',
+          text: `Halo, saya tertarik dengan produk "${productName}". Apakah produk ini masih tersedia?`,
+          timestamp: timeString,
+        });
+        lastMsg = `Halo, saya tertarik dengan produk "${productName}". Apakah produk ini masih tersedia?`;
+      }
+
+      thread = {
+        id: newThreadId,
+        sellerName,
+        sellerRating: sellerRating || 4.8,
+        productName,
+        productImage,
+        lastMessage: lastMsg,
+        lastMessageTime: timeString,
+        unread: false,
+        messages,
+      };
+      threads = [thread, ...threads];
+    }
+
+    localStorage.setItem('re_love_chats', JSON.stringify(threads));
+    localStorage.setItem('re_love_active_chat_thread_id', thread.id);
+    setMessagesMobileActive(true);
+    setCurrentScreen('messages');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   // Navigator helper
   const navigate = (screen: Screen) => {
+    if (screen === 'messages') {
+      setMessagesMobileActive(false);
+    }
     if (
       (screen === 'create-listing-info' ||
         screen === 'create-listing-photo' ||
@@ -563,6 +661,9 @@ export default function App() {
               handleUpdateProduct(prod);
               setSelectedProduct(prod);
             }}
+            onChatSeller={(sellerName, sellerRating, productName, productImage) => {
+              handleOpenChat(sellerName, sellerRating, productName, productImage);
+            }}
           />
         )}
 
@@ -575,7 +676,9 @@ export default function App() {
             onSelectProduct={handleSelectProduct}
             onGoBack={() => navigate(shopBackScreen)}
             onChatSeller={(seller) => {
-              navigate('messages');
+              const sellerProd = products.find(p => p.sellerName.toLowerCase() === seller.toLowerCase());
+              const rating = sellerProd ? sellerProd.sellerRating : 4.8;
+              handleOpenChat(seller, rating);
             }}
             backLabel={
               shopBackScreen === 'seller-dashboard'
@@ -618,6 +721,9 @@ export default function App() {
             order={orders.find(o => o.id === activePayingOrder?.id) || activePayingOrder || orders[0]}
             onConfirmReceived={handleConfirmReceived}
             navigate={navigate}
+            onContactSeller={(sellerName, productName, productImage, initialText) => {
+              handleOpenChat(sellerName, 4.8, productName, productImage, initialText);
+            }}
           />
         )}
 
@@ -747,6 +853,7 @@ export default function App() {
         {currentScreen === 'messages' && (
           <MessagesView
             navigate={navigate}
+            initialMobileActive={messagesMobileActive}
           />
         )}
       </main>
